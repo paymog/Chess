@@ -1,8 +1,26 @@
 ﻿<Application x:Class="Chess.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="clr-namespace:Chess.Models"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-         
+        
+        
+        <SolidColorBrush x:Key="DarkBoardLocation" Color="Gray"/>
+        <SolidColorBrush x:Key="LightBoardLocation" Color="Beige"/>
+
+
+        <DataTemplate DataType="{x:Type models:BoardLocation}">
+            <ToggleButton x:Name="background" />
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Colour}" Value="Dark">
+                    <Setter TargetName="background" Property="Background" Value="{StaticResource DarkBoardLocation}"/>
+                </DataTrigger>
+                <DataTrigger Binding="{Binding Colour}" Value="Light">
+                    <Setter TargetName="background" Property="Background" Value="{StaticResource LightBoardLocation}"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+            
+        </DataTemplate>
     </Application.Resources>
 </Application>
