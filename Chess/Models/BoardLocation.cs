@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MVVMToolkit;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace Chess.Models
     }
 
 
-    class BoardLocation: INotifyPropertyChanged
+    class BoardLocation: ObservableObject
     {
         private BoardLocationColour _colour;
         public BoardLocationColour Colour
@@ -26,23 +27,13 @@ namespace Chess.Models
             private set
             {
                 this._colour = value;
-                //this.OnPropertyChanged("Colour");
+                base.RaisePropertyChanged(() => this.Colour);
             }
         }
 
         public BoardLocation(BoardLocationColour color)
         {
             this.Colour = color;
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        public void OnPropertyChanged(string name)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(name));
-            }
         }
     }
 }

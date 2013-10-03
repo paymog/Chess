@@ -17,7 +17,7 @@ namespace Chess.ViewModels
             get { return NUM_ROWS; }
         }
 
-        private const int NUM_COLUMNS = 10;
+        private const int NUM_COLUMNS = 8;
         public int NumColumns
         {
             get { return NUM_COLUMNS; }
