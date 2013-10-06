@@ -15,23 +15,22 @@ namespace Chess.Models
     }
 
 
-    class BoardLocation: ObservableObject
+    internal class BoardLocation: ObservableObject
     {
-        private BoardLocationColour _colour;
+        private readonly BoardLocationColour _colour;
+        private bool _canBeSelected = true;
+        private ChessPiece _piece;
+
+        
         public BoardLocationColour Colour
         {
             get
             {
                 return _colour;
             }
-            private set
-            {
-                this._colour = value;
-                base.RaisePropertyChanged(() => this.Colour);
-            }
         }
 
-        private bool _canBeSelected = true;
+        
         public bool CanBeSelected 
         { 
             get 
@@ -45,9 +44,20 @@ namespace Chess.Models
             }
         }
 
-        public BoardLocation(BoardLocationColour color)
+        public ChessPiece Piece
+        {
+            get { return _piece; }
+            set
+            {
+                _piece = value;
+                base.RaisePropertyChanged(() => this.Piece);
+            }
+        }
+
+        public BoardLocation(BoardLocationColour color, ChessPiece piece = null)
         {
             this._colour = color;
+            this.Piece = piece;
         }
     }
 }

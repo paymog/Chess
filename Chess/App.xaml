@@ -24,8 +24,7 @@
                                     <VisualState x:Name="MouseOver">
                                         <Storyboard x:Name="MouseOverStoryboard">
                                             <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).Color"
-                                          Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1">
-                                            </ColorAnimation>
+                                                            Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1"/>
                                             <ThicknessAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0.1"/>
                                         </Storyboard>
                                     </VisualState>
@@ -34,8 +33,7 @@
                                     <VisualState x:Name="Checked" >
                                         <Storyboard >
                                             <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).Color"
-                                          Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1">
-                                            </ColorAnimation>
+                                                            Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1"/>
                                             <ThicknessAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0.1"/>
                                         </Storyboard>
                                     </VisualState>
@@ -43,6 +41,7 @@
                                     <VisualState x:Name="Indeterminate" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
+                            <ContentPresenter Content="{TemplateBinding Content}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -50,7 +49,8 @@
         </Style>
 
         <DataTemplate DataType="{x:Type models:BoardLocation}">
-            <ToggleButton x:Name="mainControl" IsEnabled="{Binding CanBeSelected}" Style="{DynamicResource BoardLocationControlTemplate}"/>
+            <ToggleButton x:Name="mainControl" IsEnabled="{Binding CanBeSelected}" Style="{DynamicResource BoardLocationControlTemplate}"
+                          Content="{Binding Piece}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"/>
             <DataTemplate.Triggers>
                 <DataTrigger Binding="{Binding Colour}" Value="Dark">
                     <Setter TargetName="mainControl" Property="Background" Value="{StaticResource DarkBoardLocation}"/>
@@ -61,5 +61,14 @@
             </DataTemplate.Triggers>
         </DataTemplate>
 
+        <DataTemplate DataType="{x:Type models:ChessPiece}">
+            <TextBlock x:Name="root" Foreground="White" Background="Transparent" Text="{Binding}"/>
+            <DataTemplate.Triggers>
+                <DataTrigger Binding="{Binding Colour}" Value="Black">
+                    <Setter TargetName="root" Property="Foreground" Value="Black"/>
+                </DataTrigger>
+            </DataTemplate.Triggers>
+            
+        </DataTemplate>        
     </Application.Resources>
 </Application>
