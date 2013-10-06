@@ -9,7 +9,7 @@
     <UserControl.DataContext>
         <viewModel:ChessBoardViewModel />
     </UserControl.DataContext>
-    <ItemsControl x:Name="itemsControl" ItemsSource="{Binding Locations}">
+    <ItemsControl ItemsSource="{Binding Locations}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <UniformGrid Columns="{Binding NumColumns}" Rows="{Binding NumRows}"/>

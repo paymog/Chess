@@ -31,9 +31,23 @@ namespace Chess.Models
             }
         }
 
+        private bool _canBeSelected = true;
+        public bool CanBeSelected 
+        { 
+            get 
+            { 
+                return _canBeSelected; 
+            } 
+            set
+            {
+                _canBeSelected = value;
+                base.RaisePropertyChanged(() => this.CanBeSelected);
+            }
+        }
+
         public BoardLocation(BoardLocationColour color)
         {
-            this.Colour = color;
+            this._colour = color;
         }
     }
 }

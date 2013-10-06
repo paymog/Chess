@@ -1,7 +1,8 @@
-﻿<Window x:Class="Chess.MainWindow"
+﻿<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:view="clr-namespace:Chess.Views"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" x:Class="Chess.MainWindow"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
         <view:ChessBoardView />
