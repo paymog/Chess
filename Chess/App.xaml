@@ -17,12 +17,8 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type ToggleButton}">
-                        <Grid Background='{TemplateBinding Background}' x:Name="root">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition />
-                                <ColumnDefinition Width="20" />
-                            </Grid.ColumnDefinitions>
-                            <VisualStateManager.VisualStateGroups>
+                        <Border x:Name="Border" CornerRadius="0" BorderThickness="0" BorderBrush="Transparent" Background="{TemplateBinding Background}">
+                        <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="CommonStates">
                                     <VisualState x:Name="Normal" />
                                     <VisualState x:Name="MouseOver">
@@ -30,6 +26,7 @@
                                             <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).Color"
                                           Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1">
                                             </ColorAnimation>
+                                            <ThicknessAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0.1"/>
                                         </Storyboard>
                                     </VisualState>
                                 </VisualStateGroup>
@@ -39,14 +36,14 @@
                                             <ColorAnimation Storyboard.TargetProperty="(Border.BorderBrush).Color"
                                           Storyboard.TargetName="Border" To="{StaticResource BoardLocationMouseOver}" Duration="0:0:0.1">
                                             </ColorAnimation>
+                                            <ThicknessAnimation Storyboard.TargetName="Border" Storyboard.TargetProperty="BorderThickness" To="2" Duration="0:0:0.1"/>
                                         </Storyboard>
                                     </VisualState>
                                     <VisualState x:Name="Unchecked" />
                                     <VisualState x:Name="Indeterminate" />
                                 </VisualStateGroup>
                             </VisualStateManager.VisualStateGroups>
-                            <Border x:Name="Border" CornerRadius="2" BorderThickness="1" BorderBrush="Transparent"/>
-                        </Grid>
+                        </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
