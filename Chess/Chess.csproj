@@ -63,6 +63,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Models\Bishop.cs" />
+    <Compile Include="Models\King.cs" />
+    <Compile Include="Models\Knight.cs" />
+    <Compile Include="Models\Pawn.cs" />
+    <Compile Include="Models\Queen.cs" />
+    <Compile Include="Models\Rook.cs" />
     <Compile Include="ViewModels\ChessBoardViewModel.cs" />
     <Compile Include="Views\ChessBoardView.xaml.cs">
       <DependentUpon>ChessBoardView.xaml</DependentUpon>

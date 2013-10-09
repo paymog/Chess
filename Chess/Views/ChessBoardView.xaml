@@ -3,17 +3,42 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:viewModel="clr-namespace:Chess.ViewModels"
+             xmlns:vm="clr-namespace:Chess.ViewModels"
+             xmlns:m="clr-namespace:Chess.Models"
+             xmlns:tk="clr-namespace:MVVMToolkit;assembly=MVVMToolkit"
              mc:Ignorable="d" 
+             tk:CommandSinkBinding.CommandSink="{Binding}"
              d:DesignHeight="300" d:DesignWidth="300" >
     <UserControl.DataContext>
-        <viewModel:ChessBoardViewModel />
+        <vm:ChessBoardViewModel />
     </UserControl.DataContext>
+    <UserControl.CommandBindings>
+        <tk:CommandSinkBinding Command="vm:ChessBoardViewModel.SelectLocationCommand"/>
+        <tk:CommandSinkBinding Command="vm:ChessBoardViewModel.MovePieceHereCommand"/>
+    </UserControl.CommandBindings>
     <ItemsControl ItemsSource="{Binding Locations}">
         <ItemsControl.ItemsPanel>
             <ItemsPanelTemplate>
                 <UniformGrid Columns="{Binding NumColumns}" Rows="{Binding NumRows}"/>
             </ItemsPanelTemplate>
         </ItemsControl.ItemsPanel>
+        <ItemsControl.ItemTemplate>
+            <DataTemplate DataType="{x:Type m:BoardLocation}">
+                <ToggleButton x:Name="mainControl" IsChecked="{Binding IsSelected}" Template="{StaticResource BaseBoardLocationTemplate}"
+                          Content="{Binding Piece}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Command="vm:ChessBoardViewModel.SelectLocationCommand" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
+                <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding Colour}" Value="Dark">
+                        <Setter TargetName="mainControl" Property="Background" Value="{StaticResource DarkBoardLocation}"/>
+                    </DataTrigger>
+                    <DataTrigger Binding="{Binding Colour}" Value="Light">
+                        <Setter TargetName="mainControl" Property="Background" Value="{StaticResource LightBoardLocation}"/>
+                    </DataTrigger>
+                    <Trigger Property="Content" Value="{x:Null}" SourceName="mainControl">
+                        <Setter Property="Command" TargetName="mainControl" Value="vm:ChessBoardViewModel.MovePieceHereCommand"/>
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </ItemsControl.ItemTemplate>
+        
     </ItemsControl>
 </UserControl>

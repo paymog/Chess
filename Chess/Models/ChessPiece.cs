@@ -22,23 +22,23 @@ namespace Chess.Models
         King
     }
 
-    internal class ChessPiece
+    internal abstract class ChessPiece
     {
         private readonly ChessPieceColour _colour;
         public ChessPieceColour Colour { get { return this._colour; } }
 
-        private readonly ChessPieceType _type;
-        public ChessPieceType Type { get { return this._type; } }
+        //private readonly ChessPieceType _type;
+        //public ChessPieceType Type { get { return this._type; } }
 
-        public ChessPiece(ChessPieceType type, ChessPieceColour colour)
+        public ChessPiece(/*ChessPieceType type, */ChessPieceColour colour)
         {
             this._colour = colour;
-            this._type = type;
+            //this._type = type;
         }
 
         public override string ToString()
         {
-            return this.Colour.ToString() + " " + this.Type.ToString();
+            return this.Colour.ToString();// +" " + this.Type.ToString();
         }
     }
 }
