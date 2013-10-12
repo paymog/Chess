@@ -6,39 +6,28 @@ using System.Threading.Tasks;
 
 namespace Chess.Models
 {
-    public enum ChessPieceColour
+    /// <summary>
+    /// Board location, chess piece and player colours
+    /// </summary>
+    public enum ChessColour
     {
         Black,
         White
     }
 
-    public enum ChessPieceType
-    {
-        Pawn,
-        Knight,
-        Bishop,
-        Rook,
-        Queen,
-        King
-    }
-
     internal abstract class ChessPiece
     {
-        private readonly ChessPieceColour _colour;
-        public ChessPieceColour Colour { get { return this._colour; } }
+        private readonly ChessColour _colour;
+        public ChessColour Colour { get { return this._colour; } }
 
-        //private readonly ChessPieceType _type;
-        //public ChessPieceType Type { get { return this._type; } }
-
-        public ChessPiece(/*ChessPieceType type, */ChessPieceColour colour)
+        public ChessPiece(ChessColour colour)
         {
             this._colour = colour;
-            //this._type = type;
         }
 
         public override string ToString()
         {
-            return this.Colour.ToString();// +" " + this.Type.ToString();
+            return this.Colour.ToString();
         }
     }
 }

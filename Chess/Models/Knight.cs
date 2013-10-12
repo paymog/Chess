@@ -8,7 +8,7 @@ namespace Chess.Models
 {
     class Knight: ChessPiece
     {
-        public Knight(ChessPieceColour colour): base(colour)
+        public Knight(ChessColour colour): base(colour)
         {
 
         }

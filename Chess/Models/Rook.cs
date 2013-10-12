@@ -8,7 +8,7 @@ namespace Chess.Models
 {
     class Rook:ChessPiece
     {
-        public Rook(ChessPieceColour colour): base(colour)
+        public Rook(ChessColour colour): base(colour)
         {
 
         }

@@ -8,21 +8,15 @@ using System.Threading.Tasks;
 
 namespace Chess.Models
 {
-    public enum BoardLocationColour
-    {
-        Light,
-        Dark
-    }
-
 
     internal class BoardLocation: ObservableObject
     {
-        private readonly BoardLocationColour _colour;
+        private readonly ChessColour _colour;
         private bool _isSelected = false;
         private ChessPiece _piece = null;
 
-        
-        public BoardLocationColour Colour
+
+        public ChessColour Colour
         {
             get
             {
@@ -54,10 +48,18 @@ namespace Chess.Models
             }
         }
 
-        public BoardLocation(BoardLocationColour color, ChessPiece piece = null)
+        public BoardLocation(ChessColour color, ChessPiece piece = null)
         {
             this._colour = color;
             this.Piece = piece;
         }
+
+        #region Public interface
+
+        public ChessColour PieceColour()
+        {
+            return this.Piece.Colour;
+        }
+        #endregion
     }
 }

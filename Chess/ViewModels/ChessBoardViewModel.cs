@@ -47,6 +47,20 @@ namespace Chess.ViewModels
             }
         }
 
+        private ChessColour _currentPlayerColour = ChessColour.White;
+        public ChessColour CurrentPlayerColour
+        {
+            get
+            {
+                return this._currentPlayerColour;
+            }
+            set
+            {
+                this._currentPlayerColour = value;
+                base.RaisePropertyChanged(() => this.CurrentPlayerColour);
+            }
+        }
+
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
         public static readonly RoutedCommand MovePieceHereCommand = new RoutedCommand();
 
@@ -55,21 +69,30 @@ namespace Chess.ViewModels
             _locations = CreateChessBoard();
             CreateChessPieces();
 
-            base.RegisterCommand(SelectLocationCommand, this.CanSelectLocation, param => this.SelectLocation(param as BoardLocation));
-            base.RegisterCommand(MovePieceHereCommand, this.CanMovePieceHere, param => this.MovePieceHere(param as BoardLocation));
+            base.RegisterCommand(SelectLocationCommand,param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
+            base.RegisterCommand(MovePieceHereCommand, param => this.CanMovePieceHere(param as BoardLocation), param => this.MovePieceHere(param as BoardLocation));
         }
 
         #region Commands
        
-        private bool CanMovePieceHere(object obj)
+        private bool CanMovePieceHere(BoardLocation obj)
         {
             return this.SelectedBoardLocation != null;
         }
 
         private void MovePieceHere(BoardLocation location)
         {
+            if (this.CurrentPlayerColour == ChessColour.Black)
+            {
+                this.CurrentPlayerColour = ChessColour.White;
+            }
+            else
+            {
+                this.CurrentPlayerColour = ChessColour.Black;
+            }
             SelectedBoardLocation.IsSelected = false;
             location.IsSelected = false;
+
             location.Piece = SelectedBoardLocation.Piece;
             SelectedBoardLocation.Piece = null;
 
@@ -78,13 +101,17 @@ namespace Chess.ViewModels
 
         }
 
-        private bool CanSelectLocation(object obj)
+        private bool CanSelectLocation(BoardLocation obj)
         {
-            return true;
+            return obj.PieceColour() == this.CurrentPlayerColour;
         }
 
         private void SelectLocation(BoardLocation location)
         {
+            if (this.SelectedBoardLocation != null)
+            {
+                this.SelectedBoardLocation.IsSelected = false;
+            }
             this.SelectedBoardLocation = location;
         }
         #endregion
@@ -94,37 +121,37 @@ namespace Chess.ViewModels
         private void CreateChessPieces()
         {
             //create rooks
-            this.ChangeChessPiece(0, 0, new Rook(ChessPieceColour.Black));
-            this.ChangeChessPiece(0, 7, new Rook(ChessPieceColour.Black));
-            this.ChangeChessPiece(7, 0, new Rook(ChessPieceColour.White));
-            this.ChangeChessPiece(7, 7, new Rook(ChessPieceColour.White));
+            this.ChangeChessPiece(0, 0, new Rook(ChessColour.Black));
+            this.ChangeChessPiece(0, 7, new Rook(ChessColour.Black));
+            this.ChangeChessPiece(7, 0, new Rook(ChessColour.White));
+            this.ChangeChessPiece(7, 7, new Rook(ChessColour.White));
 
             //create knights
-            this.ChangeChessPiece(0, 1, new Knight(ChessPieceColour.Black));
-            this.ChangeChessPiece(0, 6, new Knight(ChessPieceColour.Black));
-            this.ChangeChessPiece(7, 1, new Knight(ChessPieceColour.White));
-            this.ChangeChessPiece(7, 6, new Knight(ChessPieceColour.White));
+            this.ChangeChessPiece(0, 1, new Knight(ChessColour.Black));
+            this.ChangeChessPiece(0, 6, new Knight(ChessColour.Black));
+            this.ChangeChessPiece(7, 1, new Knight(ChessColour.White));
+            this.ChangeChessPiece(7, 6, new Knight(ChessColour.White));
 
             //create bishops
-            this.ChangeChessPiece(0, 2, new Bishop(ChessPieceColour.Black));
-            this.ChangeChessPiece(0, 5, new Bishop(ChessPieceColour.Black));
-            this.ChangeChessPiece(7, 2, new Bishop(ChessPieceColour.White));
-            this.ChangeChessPiece(7, 5, new Bishop(ChessPieceColour.White));
+            this.ChangeChessPiece(0, 2, new Bishop(ChessColour.Black));
+            this.ChangeChessPiece(0, 5, new Bishop(ChessColour.Black));
+            this.ChangeChessPiece(7, 2, new Bishop(ChessColour.White));
+            this.ChangeChessPiece(7, 5, new Bishop(ChessColour.White));
 
             //create queens
-            this.ChangeChessPiece(0, 3, new Queen( ChessPieceColour.Black));
-            this.ChangeChessPiece(7, 3, new Queen( ChessPieceColour.White));
+            this.ChangeChessPiece(0, 3, new Queen( ChessColour.Black));
+            this.ChangeChessPiece(7, 3, new Queen( ChessColour.White));
 
             //create kings
-            this.ChangeChessPiece(0, 4, new King(ChessPieceColour.Black));
-            this.ChangeChessPiece(7, 4, new King(ChessPieceColour.White));
+            this.ChangeChessPiece(0, 4, new King(ChessColour.Black));
+            this.ChangeChessPiece(7, 4, new King(ChessColour.White));
 
 
             //create pawns
             for (int i = 0; i < 8; i++)
             {
-                this.ChangeChessPiece(1, i, new Pawn(ChessPieceColour.Black));
-                this.ChangeChessPiece(6, i, new Pawn( ChessPieceColour.White));
+                this.ChangeChessPiece(1, i, new Pawn(ChessColour.Black));
+                this.ChangeChessPiece(6, i, new Pawn( ChessColour.White));
             }
         }
 
@@ -142,18 +169,19 @@ namespace Chess.ViewModels
                 {
                     if (i % 2 == 0)
                     {
-                        result.Add(new BoardLocation(BoardLocationColour.Light));
-                        result.Add(new BoardLocation(BoardLocationColour.Dark));
+                        result.Add(new BoardLocation(ChessColour.White));
+                        result.Add(new BoardLocation(ChessColour.Black));
                     }
                     else
                     {
-                       result.Add(new BoardLocation(BoardLocationColour.Dark));
-                       result.Add(new BoardLocation(BoardLocationColour.Light));
+                        result.Add(new BoardLocation(ChessColour.Black));
+                        result.Add(new BoardLocation(ChessColour.White));
                     }
                 }
             }
             return result;
         }
         #endregion
+
     }
 }

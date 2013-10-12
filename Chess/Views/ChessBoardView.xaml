@@ -27,10 +27,10 @@
                 <ToggleButton x:Name="mainControl" IsChecked="{Binding IsSelected}" Template="{StaticResource BaseBoardLocationTemplate}"
                           Content="{Binding Piece}" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Command="vm:ChessBoardViewModel.SelectLocationCommand" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Content}"/>
                 <DataTemplate.Triggers>
-                    <DataTrigger Binding="{Binding Colour}" Value="Dark">
+                    <DataTrigger Binding="{Binding Colour}" Value="Black">
                         <Setter TargetName="mainControl" Property="Background" Value="{StaticResource DarkBoardLocation}"/>
                     </DataTrigger>
-                    <DataTrigger Binding="{Binding Colour}" Value="Light">
+                    <DataTrigger Binding="{Binding Colour}" Value="White">
                         <Setter TargetName="mainControl" Property="Background" Value="{StaticResource LightBoardLocation}"/>
                     </DataTrigger>
                     <Trigger Property="Content" Value="{x:Null}" SourceName="mainControl">
