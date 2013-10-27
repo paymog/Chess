@@ -64,6 +64,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Models\Bishop.cs" />
+    <Compile Include="Models\ChessBoard.cs" />
     <Compile Include="Models\King.cs" />
     <Compile Include="Models\Knight.cs" />
     <Compile Include="Models\Pawn.cs" />

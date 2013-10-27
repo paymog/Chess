@@ -15,7 +15,7 @@ namespace Chess.Models
 
         public override string ToString()
         {
-            return base.ToString() + "Queen";
+            return "Queen";
         }
     }
 }

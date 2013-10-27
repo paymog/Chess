@@ -12,24 +12,23 @@ namespace Chess.ViewModels
 {
     class ChessBoardViewModel : BaseViewModel
     {
-        private const int NUM_ROWS = 8;
+        private readonly ChessBoard board = new ChessBoard();
+
         public int NumRows
         {
-            get { return NUM_ROWS; }
+            get { return ChessBoard.NUM_ROWS; }
         }
-
-        private const int NUM_COLUMNS = 8;
         public int NumColumns
         {
-            get { return NUM_COLUMNS; }
+            get { return ChessBoard.NUM_COLUMNS; }
         }
 
-        private readonly ObservableCollection<BoardLocation> _locations;
+        
         public ObservableCollection<BoardLocation> Locations
         {
             get
             {
-                return _locations;
+                return board.Locations;
             }
         }
 
@@ -66,8 +65,6 @@ namespace Chess.ViewModels
 
         public ChessBoardViewModel()
         {
-            _locations = CreateChessBoard();
-            CreateChessPieces();
 
             base.RegisterCommand(SelectLocationCommand,param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
             base.RegisterCommand(MovePieceHereCommand, param => this.CanMovePieceHere(param as BoardLocation), param => this.MovePieceHere(param as BoardLocation));
