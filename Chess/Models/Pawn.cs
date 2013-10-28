@@ -17,5 +17,10 @@ namespace Chess.Models
         {
             return "Pawn";
         }
+
+        public override System.Collections.BitArray GetRay(int location)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -13,20 +13,23 @@ namespace Chess.Models
 
         static Knight()
         {
-            var rays = new List<BitArray>(ChessPiece.NUM_BOARD_LOCATIONS);
-            for (int i = 0; i < ChessPiece.NUM_BOARD_LOCATIONS; i++)
+            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
+            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var upLeft = i - 16 - 1;
-                var upRight = i - 16 + 1;
+                var currRow = i / ChessBoard.NUM_COLUMNS;
+                var currCol = i % ChessBoard.NUM_COLUMNS;
 
-                var leftUp = i - 2 - 8;
-                var leftDown = i - 2 + 8;
+                var upLeft = new Tuple<int, int>(currRow - 2, currCol - 1);
+                var upRight = new Tuple<int, int>(currRow - 2, currCol + 1);
 
-                var rightUp = i + 2 - 8;
-                var rightDown = i + 2 + 8;
+                var leftUp = new Tuple<int, int>(currRow - 1, currCol - 2);
+                var leftDown = new Tuple<int, int>(currRow + 1, currCol - 2);
 
-                var downLeft = i + 16 - 1;
-                var downRight = i + 16 + 1;
+                var rightUp = new Tuple<int, int>(currRow - 1, currCol + 2);
+                var rightDown = new Tuple<int, int>(currRow + 1, currCol + 2);
+
+                var downLeft = new Tuple<int, int>(currRow + 2, currCol - 1);
+                var downRight = new Tuple<int, int>(currRow + 2, currCol + 1);
 
                 rays.Add(ChessPiece.generateRay(upLeft, upRight, leftUp, leftDown, rightUp, rightDown, downLeft, downRight));
             }
@@ -41,6 +44,11 @@ namespace Chess.Models
         public override string ToString()
         {
             return "Knight";
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            return RAYS.ElementAt(location);
         }
     }
 }

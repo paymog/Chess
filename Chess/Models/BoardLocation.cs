@@ -13,6 +13,7 @@ namespace Chess.Models
     {
         private readonly ChessColour _colour;
         private bool _isSelected = false;
+        private bool _isTargeted = false;
         private ChessPiece _piece = null;
 
 
@@ -45,6 +46,16 @@ namespace Chess.Models
             {
                 _piece = value;
                 base.RaisePropertyChanged(() => this.Piece);
+            }
+        }
+
+        public bool IsTargeted
+        {
+            get { return this._isTargeted; }
+            set
+            {
+                this._isTargeted = value;
+                base.RaisePropertyChanged(() => this.IsTargeted);
             }
         }
 

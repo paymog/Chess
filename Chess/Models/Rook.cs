@@ -13,23 +13,23 @@ namespace Chess.Models
 
         static Rook()
         {
-            var rays = new List<BitArray>(ChessPiece.NUM_BOARD_LOCATIONS);
-            for (int i = 0; i < ChessPiece.NUM_BOARD_LOCATIONS; i++)
+            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
+            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                int currRow = i / 8;
-                int currCol = i % 8;
-                var locations = new List<int>();
+                int currRow = i / ChessBoard.NUM_COLUMNS;
+                int currCol = i % ChessBoard.NUM_COLUMNS;
+                var locations = new List<Tuple<int, int>>();
 
                 //vertical moves
                 for (int j = 1; j < ChessBoard.NUM_ROWS; j++)
                 {
                     //moves above
                     var newRow = currRow - j;
-                    locations.Add(newRow * ChessBoard.NUM_COLUMNS + currCol);
+                    locations.Add(new Tuple<int, int>(newRow, currCol));
 
                     //moves below
                     newRow = currRow + j;
-                    locations.Add(newRow * ChessBoard.NUM_COLUMNS + currCol);
+                    locations.Add(new Tuple<int, int>(newRow, currCol));
                 }
 
                 //horizontal moves
@@ -37,11 +37,11 @@ namespace Chess.Models
                 {
                     //moves to left
                     var newCol = currCol - j;
-                    locations.Add(currRow * ChessBoard.NUM_COLUMNS + newCol);
+                    locations.Add(new Tuple<int, int>(currRow, newCol));
 
                     //moves to right
                     newCol = currCol + j;
-                    locations.Add(currRow * ChessBoard.NUM_COLUMNS + newCol);
+                    locations.Add(new Tuple<int, int>(currRow, newCol));
                 }
 
                 rays.Add(ChessPiece.generateRay(locations.ToArray()));
@@ -57,6 +57,11 @@ namespace Chess.Models
         public override string ToString()
         {
             return "Rook";
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            return RAYS.ElementAt(location);
         }
     }
 }

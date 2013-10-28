@@ -33,6 +33,9 @@
                     <DataTrigger Binding="{Binding Colour}" Value="White">
                         <Setter TargetName="mainControl" Property="Background" Value="{StaticResource LightBoardLocation}"/>
                     </DataTrigger>
+                    <DataTrigger Binding="{Binding IsTargeted}" Value="True">
+                        <Setter TargetName="mainControl" Property="Background" Value="Green"/>
+                    </DataTrigger>
                     <Trigger Property="Content" Value="{x:Null}" SourceName="mainControl">
                         <Setter Property="Command" TargetName="mainControl" Value="vm:ChessBoardViewModel.MovePieceHereCommand"/>
                     </Trigger>

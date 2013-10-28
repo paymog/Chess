@@ -13,17 +13,19 @@ namespace Chess.Models
      
         static King()
         {
-            var rays = new List<BitArray>(ChessPiece.NUM_BOARD_LOCATIONS);
-            for (int i = 0; i < ChessPiece.NUM_BOARD_LOCATIONS; i++)
+            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
+            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var topLeft = i - 8 - 1;
-                var top = i - 8;
-                var topRight = i - 8 + 1;
-                var left = i - 1;
-                var right = i + 1;
-                var bottomLeft = i + 8 - 1;
-                var bottom = i + 8;
-                var bottomRight = i + 8 + 1;
+                var currRow = i / ChessBoard.NUM_COLUMNS;
+                var currCol = i % ChessBoard.NUM_COLUMNS;
+                var topLeft = new Tuple<int, int>(currRow - 1, currCol - 1);
+                var top = new Tuple<int, int>(currRow - 1, currCol);
+                var topRight = new Tuple<int, int>(currRow - 1, currCol + 1);
+                var left = new Tuple<int, int>(currRow, currCol - 1);
+                var right = new Tuple<int, int>(currRow, currCol + 1);
+                var bottomLeft = new Tuple<int, int>(currRow + 1, currCol - 1);
+                var bottom = new Tuple<int, int>(currRow + 1, currCol);
+                var bottomRight = new Tuple<int, int>(currRow + 1, currCol + 1);
 
                 rays.Add(ChessPiece.generateRay(topLeft, top, topRight, left, right, bottomLeft, bottom, bottomRight));
             }
@@ -38,6 +40,11 @@ namespace Chess.Models
         public override string ToString()
         {
             return "King";
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            return RAYS.ElementAt(location);
         }
     }
 }

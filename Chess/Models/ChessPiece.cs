@@ -18,10 +18,12 @@ namespace Chess.Models
 
     internal abstract class ChessPiece
     {
-        private readonly ChessColour _colour;
-        public ChessColour Colour { get { return this._colour; } }
+        //abstract stuff
+        public abstract BitArray GetRay(int location);
 
-        public static readonly int NUM_BOARD_LOCATIONS = 64;
+        private readonly ChessColour _colour;
+        
+        public ChessColour Colour { get { return this._colour; } }
 
         public ChessPiece(ChessColour colour)
         {
@@ -33,19 +35,20 @@ namespace Chess.Models
             return this.Colour.ToString();
         }
 
-        private static bool isValidBoardLocation(int location)
+        private static bool isValidBoardLocation(int row, int column)
         {
-            return location >= 0 && location < NUM_BOARD_LOCATIONS;
+            return row >= 0 && row < ChessBoard.NUM_ROWS
+                && column >= 0 && column < ChessBoard.NUM_COLUMNS;
         }
 
-        protected static BitArray generateRay(params int[] potentialLocations)
+        protected static BitArray generateRay(params Tuple<int, int>[] potentialLocations)
         {
-            var result = new BitArray(NUM_BOARD_LOCATIONS, false);
-            foreach(int location in potentialLocations)
+            var result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            foreach(Tuple<int, int> location in potentialLocations)
             {
-                if(isValidBoardLocation(location))
+                if(isValidBoardLocation(location.Item1, location.Item2))
                 {
-                    result[location] = true;
+                    result[location.Item1*ChessBoard.NUM_COLUMNS + location.Item2] = true;
                 }
             }
 

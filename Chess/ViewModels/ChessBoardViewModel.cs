@@ -1,6 +1,7 @@
 ﻿using Chess.Models;
 using MVVMToolkit;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Chess.ViewModels
     class ChessBoardViewModel : BaseViewModel
     {
         private readonly ChessBoard board = new ChessBoard();
+        private ChessColour _currentPlayerColour = ChessColour.White;
+        private BoardLocation _selectedBoardLocation = null;
 
         public int NumRows
         {
@@ -32,7 +35,6 @@ namespace Chess.ViewModels
             }
         }
 
-        private BoardLocation _selectedBoardLocation = null;
         public BoardLocation SelectedBoardLocation
         {
             get
@@ -46,7 +48,6 @@ namespace Chess.ViewModels
             }
         }
 
-        private ChessColour _currentPlayerColour = ChessColour.White;
         public ChessColour CurrentPlayerColour
         {
             get
@@ -72,7 +73,7 @@ namespace Chess.ViewModels
 
         #region Commands
        
-        private bool CanMovePieceHere(BoardLocation obj)
+        private bool CanMovePieceHere(BoardLocation location)
         {
             return this.SelectedBoardLocation != null;
         }
@@ -98,9 +99,9 @@ namespace Chess.ViewModels
 
         }
 
-        private bool CanSelectLocation(BoardLocation obj)
+        private bool CanSelectLocation(BoardLocation location)
         {
-            return obj.PieceColour() == this.CurrentPlayerColour;
+            return location.PieceColour() == this.CurrentPlayerColour;
         }
 
         private void SelectLocation(BoardLocation location)
@@ -110,73 +111,17 @@ namespace Chess.ViewModels
                 this.SelectedBoardLocation.IsSelected = false;
             }
             this.SelectedBoardLocation = location;
-        }
-        #endregion
-
-        #region Initialization
-
-        private void CreateChessPieces()
-        {
-            //create rooks
-            this.ChangeChessPiece(0, 0, new Rook(ChessColour.Black));
-            this.ChangeChessPiece(0, 7, new Rook(ChessColour.Black));
-            this.ChangeChessPiece(7, 0, new Rook(ChessColour.White));
-            this.ChangeChessPiece(7, 7, new Rook(ChessColour.White));
-
-            //create knights
-            this.ChangeChessPiece(0, 1, new Knight(ChessColour.Black));
-            this.ChangeChessPiece(0, 6, new Knight(ChessColour.Black));
-            this.ChangeChessPiece(7, 1, new Knight(ChessColour.White));
-            this.ChangeChessPiece(7, 6, new Knight(ChessColour.White));
-
-            //create bishops
-            this.ChangeChessPiece(0, 2, new Bishop(ChessColour.Black));
-            this.ChangeChessPiece(0, 5, new Bishop(ChessColour.Black));
-            this.ChangeChessPiece(7, 2, new Bishop(ChessColour.White));
-            this.ChangeChessPiece(7, 5, new Bishop(ChessColour.White));
-
-            //create queens
-            this.ChangeChessPiece(0, 3, new Queen( ChessColour.Black));
-            this.ChangeChessPiece(7, 3, new Queen( ChessColour.White));
-
-            //create kings
-            this.ChangeChessPiece(0, 4, new King(ChessColour.Black));
-            this.ChangeChessPiece(7, 4, new King(ChessColour.White));
 
 
-            //create pawns
-            for (int i = 0; i < 8; i++)
+            ChessPiece piece = location.Piece;
+            BitArray ray = piece.GetRay(this.Locations.IndexOf(location));
+            for(int i = 0; i < this.Locations.Count; i++)
             {
-                this.ChangeChessPiece(1, i, new Pawn(ChessColour.Black));
-                this.ChangeChessPiece(6, i, new Pawn( ChessColour.White));
-            }
-        }
-
-        private void ChangeChessPiece(int row, int column, ChessPiece chessPiece)
-        {
-            this.Locations[row * 8 + column].Piece = chessPiece;
-        }
-
-        private ObservableCollection<BoardLocation> CreateChessBoard()
-        {
-            var result = new ObservableCollection<BoardLocation>();
-            for (int i = 0; i < NumRows; i++)
-            {
-                for (int j = 0; j < NumColumns / 2; j++)
+                if(ray[i])
                 {
-                    if (i % 2 == 0)
-                    {
-                        result.Add(new BoardLocation(ChessColour.White));
-                        result.Add(new BoardLocation(ChessColour.Black));
-                    }
-                    else
-                    {
-                        result.Add(new BoardLocation(ChessColour.Black));
-                        result.Add(new BoardLocation(ChessColour.White));
-                    }
+                    this.Locations[i].IsTargeted = true;
                 }
             }
-            return result;
         }
         #endregion
 
