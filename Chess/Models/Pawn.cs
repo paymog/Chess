@@ -32,6 +32,7 @@ namespace Chess.Models
                 whiteLocations.Add(new Tuple<int, int>(currRow - 1, currCol - 1));
                 whiteLocations.Add(new Tuple<int, int>(currRow - 1, currCol + 1));
 
+                //home row can move two places
                 if(currRow == 1)
                 {
                     blackLocations.Add(new Tuple<int, int>(currRow + 2, currCol));

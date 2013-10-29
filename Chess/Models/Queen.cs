@@ -18,7 +18,8 @@ namespace Chess.Models
             var rook = new Rook(ChessColour.Black);
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var ray = bishop.GetRay(i).Or(rook.GetRay(i));
+                var tempRay = new BitArray(bishop.GetRay(i));
+                var ray = tempRay.Or(rook.GetRay(i));
                 rays.Add(ray);
             }
             RAYS = rays;

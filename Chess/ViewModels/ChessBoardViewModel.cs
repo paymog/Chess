@@ -26,7 +26,7 @@ namespace Chess.ViewModels
             get { return ChessBoard.NUM_COLUMNS; }
         }
 
-        
+
         public ObservableCollection<BoardLocation> Locations
         {
             get
@@ -67,12 +67,12 @@ namespace Chess.ViewModels
         public ChessBoardViewModel()
         {
 
-            base.RegisterCommand(SelectLocationCommand,param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
+            base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
             base.RegisterCommand(MovePieceHereCommand, param => this.CanMovePieceHere(param as BoardLocation), param => this.MovePieceHere(param as BoardLocation));
         }
 
         #region Commands
-       
+
         private bool CanMovePieceHere(BoardLocation location)
         {
             return this.SelectedBoardLocation != null;
@@ -96,6 +96,7 @@ namespace Chess.ViewModels
 
 
             this.SelectedBoardLocation = null;
+            this.UntargetAllLocations();
 
         }
 
@@ -106,21 +107,53 @@ namespace Chess.ViewModels
 
         private void SelectLocation(BoardLocation location)
         {
-            if (this.SelectedBoardLocation != null)
+            this.UntargetAllLocations();
+            //if nothing is selected, select this
+            if (this.SelectedBoardLocation == null)
+            {
+                this.SelectedBoardLocation = location;
+            }
+            //if something IS selected, deselect it and select the new one
+            else if (this.SelectedBoardLocation != location)
             {
                 this.SelectedBoardLocation.IsSelected = false;
+                this.SelectedBoardLocation = location;
             }
-            this.SelectedBoardLocation = location;
+            //we deselected our previous selection
+            else
+            {
+                this.SelectedBoardLocation = null;
+            }
 
+            this.TargetLocations(this.SelectedBoardLocation);
+
+
+
+        }
+
+        private void TargetLocations(BoardLocation location)
+        {
+            if(location == null)
+            {
+                return;
+            }
 
             ChessPiece piece = location.Piece;
-            BitArray ray = piece.GetRay(this.Locations.IndexOf(location));
-            for(int i = 0; i < this.Locations.Count; i++)
+            var ray = piece.GetRay(this.Locations.IndexOf(location));
+            for(int i = 0; i < ray.Count; i++)
             {
                 if(ray[i])
                 {
                     this.Locations[i].IsTargeted = true;
                 }
+            }
+        }
+
+        private void UntargetAllLocations()
+        {
+            foreach(BoardLocation location in this.Locations)
+            {
+                location.IsTargeted = false;
             }
         }
         #endregion
