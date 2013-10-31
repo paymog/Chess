@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Chess.Models
 {
-    class King: ChessPiece
+    public class King: ChessPiece
     {
         private static readonly IReadOnlyCollection<BitArray> RAYS;
      

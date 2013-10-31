@@ -16,7 +16,7 @@ namespace Chess.Models
         White
     }
 
-    internal abstract class ChessPiece
+    public abstract class ChessPiece
     {
         //abstract stuff
         public abstract BitArray GetRay(int location);

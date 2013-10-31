@@ -11,7 +11,7 @@ using System.Windows.Input;
 
 namespace Chess.ViewModels
 {
-    class ChessBoardViewModel : BaseViewModel
+    public class ChessBoardViewModel : BaseViewModel
     {
         private readonly ChessBoard board = new ChessBoard();
         private ChessColour _currentPlayerColour = ChessColour.White;
@@ -66,16 +66,20 @@ namespace Chess.ViewModels
 
         public ChessBoardViewModel()
         {
-
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
             base.RegisterCommand(MovePieceHereCommand, param => this.CanMovePieceHere(param as BoardLocation), param => this.MovePieceHere(param as BoardLocation));
+            
         }
 
         #region Commands
 
         private bool CanMovePieceHere(BoardLocation location)
         {
-            return this.SelectedBoardLocation != null;
+            if(this.SelectedBoardLocation == null)
+            {
+                return false;
+            }
+            return this.SelectedBoardLocation != location;
         }
 
         private void MovePieceHere(BoardLocation location)
@@ -157,6 +161,5 @@ namespace Chess.ViewModels
             }
         }
         #endregion
-
     }
 }

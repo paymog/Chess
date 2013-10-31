@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Chess.Models
 {
-    class ChessBoard
+    public class ChessBoard
     {
         public static readonly int NUM_ROWS = 8;
         public static readonly int NUM_COLUMNS = 8;
@@ -20,7 +20,6 @@ namespace Chess.Models
         {
             get { return this._locations; }
         }
-
 
         public ChessBoard()
         {

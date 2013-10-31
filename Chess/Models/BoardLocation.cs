@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Chess.Models
 {
 
-    internal class BoardLocation: ObservableObject
+    public class BoardLocation: ObservableObject
     {
         private readonly ChessColour _colour;
         private bool _isSelected = false;
