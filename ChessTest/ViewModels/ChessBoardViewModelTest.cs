@@ -33,7 +33,7 @@ namespace ChessTest.ViewModels
 
             model.CurrentPlayerColour = ChessColour.Black;
             location.Piece = new Pawn(ChessColour.Black);
-            Assert.IsTrue(CanSelect(location)); 
+            Assert.IsTrue(CanSelect(location));
         }
 
         [TestMethod]
@@ -50,26 +50,32 @@ namespace ChessTest.ViewModels
         [TestMethod]
         public void CanSelectLocation_WithCurrentSelection_WithoutPiece()
         {
-            var location = new BoardLocation(ChessColour.Black);
+            var location = new BoardLocation(ChessColour.Black) { IsTargeted = true };
             model.SelectedBoardLocation = new BoardLocation(ChessColour.Black);
             Assert.IsTrue(CanSelect(location));
+
+            location.IsTargeted = false;
+            Assert.IsFalse(CanSelect(location));
         }
 
         [TestMethod]
         public void CanSelectLocation_WithCurrentSelection_WithPiece_WrongColour()
         {
-            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.Black));
+            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.Black)) { IsTargeted = false };
             model.SelectedBoardLocation = new BoardLocation(ChessColour.Black);
             Assert.IsFalse(CanSelect(location));
+
+            location.IsTargeted = true;
+            Assert.IsTrue(CanSelect(location));
         }
 
         [TestMethod]
-      public void CanSelectLocation_WithCurrentSelection_WithPiece_RightColour()
-      {
+        public void CanSelectLocation_WithCurrentSelection_WithPiece_RightColour()
+        {
             var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.White));
             model.SelectedBoardLocation = new BoardLocation(ChessColour.White);
             Assert.IsTrue(CanSelect(location));
-      }
+        }
 
         [TestMethod]
         public void SelectLocation_WithoutCurrentSelection()
@@ -91,6 +97,8 @@ namespace ChessTest.ViewModels
         [TestMethod]
         public void SelectLocation_WithCurrentSelection_DifferenLocationWithPiece()
         {
+            //two cases, select another piece of same colour vs different colour
+            //same colour
             var firstLocation = model.Locations[0];
             var secondLocation = model.Locations[1];
 
@@ -99,6 +107,19 @@ namespace ChessTest.ViewModels
 
             Assert.AreSame(secondLocation, model.SelectedBoardLocation);
             Assert.IsFalse(firstLocation.IsSelected);
+
+            //different colour
+            this.testInitialize();
+            firstLocation = model.Locations[0]; //select black rook
+            Select(firstLocation);
+
+            secondLocation = model.Locations[56]; //select white rook in same column, this should be targeted
+            Assert.IsTrue(secondLocation.IsTargeted);
+            Select(secondLocation);
+            Assert.IsNull(model.SelectedBoardLocation);
+            Assert.IsFalse(firstLocation.IsSelected);
+            Assert.IsFalse(secondLocation.IsSelected);
+            
         }
 
         [TestMethod]

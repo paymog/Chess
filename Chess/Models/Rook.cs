@@ -59,9 +59,15 @@ namespace Chess.Models
             return "Rook";
         }
 
+        public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
+        {
+            BitArray myColourLocations = this.Colour == ChessColour.Black ? blackLocations : whiteLocations;
+            return new BitArray(this.GetRay(location).And(myColourLocations.Not()));
+        }
+
         public override BitArray GetRay(int location)
         {
-            return RAYS.ElementAt(location);
+            return new BitArray(RAYS.ElementAt(location));
         }
     }
 }

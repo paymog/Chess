@@ -20,6 +20,7 @@ namespace Chess.Models
     {
         //abstract stuff
         public abstract BitArray GetRay(int location);
+        public abstract BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations);
 
         private readonly ChessColour _colour;
         
@@ -54,7 +55,5 @@ namespace Chess.Models
 
             return result;
         }
-
-
     }
 }

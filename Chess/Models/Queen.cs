@@ -18,9 +18,7 @@ namespace Chess.Models
             var rook = new Rook(ChessColour.Black);
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var tempRay = new BitArray(bishop.GetRay(i));
-                var ray = tempRay.Or(rook.GetRay(i));
-                rays.Add(ray);
+                rays.Add(bishop.GetRay(i).Or(rook.GetRay(i)));
             }
             RAYS = rays;
         }
@@ -34,9 +32,14 @@ namespace Chess.Models
             return "Queen";
         }
 
-        public override System.Collections.BitArray GetRay(int location)
+        public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
             return RAYS.ElementAt(location);
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            return new BitArray(RAYS.ElementAt(location));
         }
     }
 }

@@ -46,9 +46,14 @@ namespace Chess.Models
             return "Knight";
         }
 
-        public override BitArray GetRay(int location)
+        public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
             return RAYS.ElementAt(location);
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            return new BitArray(RAYS.ElementAt(location));
         }
     }
 }

@@ -58,14 +58,19 @@ namespace Chess.Models
             return "Pawn";
         }
 
-        public override System.Collections.BitArray GetRay(int location)
+        public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
-            switch(this.Colour)
+            return this.GetRay(location);
+        }
+
+        public override BitArray GetRay(int location)
+        {
+            switch (this.Colour)
             {
                 case ChessColour.Black:
-                    return BLACK_RAYS.ElementAt(location);
+                    return new BitArray(BLACK_RAYS.ElementAt(location));
                 case ChessColour.White:
-                    return WHITE_RAYS.ElementAt(location);
+                    return new BitArray(WHITE_RAYS.ElementAt(location));
                 default:
                     return new BitArray(64, false);
             }

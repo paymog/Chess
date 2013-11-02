@@ -62,6 +62,10 @@ namespace Chess.Models
         {
             get { return this.Piece != null; }
         }
+        public ChessColour PieceColour
+        {
+            get { return this.Piece.Colour; }
+        }
 
         public BoardLocation(ChessColour color, ChessPiece piece = null)
         {
@@ -69,13 +73,6 @@ namespace Chess.Models
             this.Piece = piece;
         }
 
-        #region Public interface
-
-        public ChessColour PieceColour()
-        {
-            return this.Piece.Colour;
-        }
-        #endregion
 
     }
 }

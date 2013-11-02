@@ -16,6 +16,8 @@ namespace Chess.ViewModels
         private readonly ChessBoard board = new ChessBoard();
         private ChessColour _currentPlayerColour = ChessColour.White;
         private BoardLocation _selectedBoardLocation = null;
+        private BitArray _whiteLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+        private BitArray _blackLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
 
         public int NumRows
         {
@@ -35,18 +37,7 @@ namespace Chess.ViewModels
             }
         }
 
-        public BoardLocation SelectedBoardLocation
-        {
-            get
-            {
-                return _selectedBoardLocation;
-            }
-            set
-            {
-                _selectedBoardLocation = value;
-                base.RaisePropertyChanged(() => this.SelectedBoardLocation);
-            }
-        }
+        
 
         public ChessColour CurrentPlayerColour
         {
@@ -60,23 +51,65 @@ namespace Chess.ViewModels
                 base.RaisePropertyChanged(() => this.CurrentPlayerColour);
             }
         }
+        
+        public BoardLocation SelectedBoardLocation
+        {
+            get
+            {
+                return _selectedBoardLocation;
+            }
+            set
+            {
+                _selectedBoardLocation = value;
+                base.RaisePropertyChanged(() => this.SelectedBoardLocation);
+            }
+        }
+
+        private BitArray WhiteLocations
+        {
+            get { return new BitArray(this._whiteLocations); }
+            set { this._whiteLocations = new BitArray(value); }
+        }
+
+        private BitArray BlackLocations
+        {
+            get { return new BitArray(this._blackLocations); }
+            set { this._blackLocations = new BitArray(value); }
+        }
 
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
 
         public ChessBoardViewModel()
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
+
+            for(int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            {
+                if(this.Locations[i].HasPiece)
+                {
+                    if(this.Locations[i].PieceColour == ChessColour.Black)
+                    {
+                        _blackLocations[i] = true;
+                    }
+                    else
+                    {
+                        _whiteLocations[i] = true;
+                    }
+                }
+            }
         }
 
         #region Commands
 
         private bool CanSelectLocation(BoardLocation location)
         {
-            if (location.HasPiece && location.PieceColour() == this.CurrentPlayerColour)
+            //any piece of the current player can be selected
+            if (location.HasPiece && location.PieceColour == this.CurrentPlayerColour)
             {
                 return true;
             }
-            else if(this.SelectedBoardLocation != null && !location.HasPiece)
+                //if a piece is already selected, then any location without a piece can be selected
+            else if(this.SelectedBoardLocation != null && location.IsTargeted)
             {
                 return true;
             }
@@ -100,7 +133,7 @@ namespace Chess.ViewModels
                 {
                     this.SelectedBoardLocation = null;
                 }
-                else if(location.HasPiece)
+                else if(location.HasPiece && !location.IsTargeted && location.PieceColour == SelectedBoardLocation.PieceColour)
                 {
                     this.SelectedBoardLocation.IsSelected = false;
                     this.SelectedBoardLocation = location;
@@ -128,7 +161,7 @@ namespace Chess.ViewModels
             }
 
             ChessPiece piece = location.Piece;
-            var ray = piece.GetRay(this.Locations.IndexOf(location));
+            var ray = piece.GetCorrectedRay(this.Locations.IndexOf(location), this.WhiteLocations, this.BlackLocations);
             for (int i = 0; i < ray.Count; i++)
             {
                 if (ray[i])
