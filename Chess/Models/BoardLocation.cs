@@ -16,7 +16,6 @@ namespace Chess.Models
         private bool _isTargeted = false;
         private ChessPiece _piece = null;
 
-
         public ChessColour Colour
         {
             get
@@ -59,6 +58,11 @@ namespace Chess.Models
             }
         }
 
+        public bool HasPiece
+        {
+            get { return this.Piece != null; }
+        }
+
         public BoardLocation(ChessColour color, ChessPiece piece = null)
         {
             this._colour = color;
@@ -72,5 +76,6 @@ namespace Chess.Models
             return this.Piece.Colour;
         }
         #endregion
+
     }
 }

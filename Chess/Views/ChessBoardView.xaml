@@ -14,7 +14,7 @@
     </UserControl.DataContext>
     <UserControl.CommandBindings>
         <tk:CommandSinkBinding Command="vm:ChessBoardViewModel.SelectLocationCommand"/>
-        <tk:CommandSinkBinding Command="vm:ChessBoardViewModel.MovePieceHereCommand"/>
+        
     </UserControl.CommandBindings>
     <ItemsControl ItemsSource="{Binding Locations}">
         <ItemsControl.ItemsPanel>
@@ -36,9 +36,6 @@
                     <DataTrigger Binding="{Binding IsTargeted}" Value="True">
                         <Setter TargetName="mainControl" Property="Background" Value="Green"/>
                     </DataTrigger>
-                    <Trigger Property="Content" Value="{x:Null}" SourceName="mainControl">
-                        <Setter Property="Command" TargetName="mainControl" Value="vm:ChessBoardViewModel.MovePieceHereCommand"/>
-                    </Trigger>
                 </DataTemplate.Triggers>
             </DataTemplate>
         </ItemsControl.ItemTemplate>

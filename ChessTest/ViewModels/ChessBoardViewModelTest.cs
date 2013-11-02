@@ -19,25 +19,111 @@ namespace ChessTest.ViewModels
         }
 
         [TestMethod]
-        public void CanMovePieceHere_NoSelectedLocation()
+        public void CanSelectLocation_WithoutCurrentSelection_NoPiece()
         {
-            model.SelectedBoardLocation = null;
-            Assert.IsFalse(model.CanExecuteCommand(ChessBoardViewModel.MovePieceHereCommand, new BoardLocation(ChessColour.Black), out handled));
+            var location = new BoardLocation(ChessColour.Black);
+            Assert.IsFalse(CanSelect(location));
         }
 
         [TestMethod]
-        public void CanMoviePieceHere_WithSameLocation()
+        public void CanSelectLocation_WithoutCurrentSelection_RightPieceColour()
         {
-            BoardLocation location = new BoardLocation(ChessColour.Black);
-            model.SelectedBoardLocation = location;
-            Assert.IsFalse(model.CanExecuteCommand(ChessBoardViewModel.MovePieceHereCommand, location, out handled));
+            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.White));
+            Assert.IsTrue(CanSelect(location));
+
+            model.CurrentPlayerColour = ChessColour.Black;
+            location.Piece = new Pawn(ChessColour.Black);
+            Assert.IsTrue(CanSelect(location)); 
         }
 
         [TestMethod]
-        public void CanMovePieceHere_WithDifferentLocation()
+        public void CanSelectLocation_WithoutCurrentSelection_WrongPieceColour()
         {
+            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.Black));
+            Assert.IsFalse(CanSelect(location));
+
+            model.CurrentPlayerColour = ChessColour.Black;
+            location.Piece = new Pawn(ChessColour.White);
+            Assert.IsFalse(CanSelect(location));
+        }
+
+        [TestMethod]
+        public void CanSelectLocation_WithCurrentSelection_WithoutPiece()
+        {
+            var location = new BoardLocation(ChessColour.Black);
             model.SelectedBoardLocation = new BoardLocation(ChessColour.Black);
-            Assert.IsTrue(model.CanExecuteCommand(ChessBoardViewModel.MovePieceHereCommand, new BoardLocation(ChessColour.White), out handled));
+            Assert.IsTrue(CanSelect(location));
+        }
+
+        [TestMethod]
+        public void CanSelectLocation_WithCurrentSelection_WithPiece_WrongColour()
+        {
+            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.Black));
+            model.SelectedBoardLocation = new BoardLocation(ChessColour.Black);
+            Assert.IsFalse(CanSelect(location));
+        }
+
+        [TestMethod]
+      public void CanSelectLocation_WithCurrentSelection_WithPiece_RightColour()
+      {
+            var location = new BoardLocation(ChessColour.Black, new Pawn(ChessColour.White));
+            model.SelectedBoardLocation = new BoardLocation(ChessColour.White);
+            Assert.IsTrue(CanSelect(location));
+      }
+
+        [TestMethod]
+        public void SelectLocation_WithoutCurrentSelection()
+        {
+            var location = model.Locations[0];
+            Select(location);
+            Assert.AreSame(location, model.SelectedBoardLocation);
+        }
+
+        [TestMethod]
+        public void SelectLocation_WithCurrentSelection_SameLocationWithPiece()
+        {
+            var location = model.Locations[0];
+            Select(location);
+            Select(location);
+            Assert.IsNull(model.SelectedBoardLocation);
+        }
+
+        [TestMethod]
+        public void SelectLocation_WithCurrentSelection_DifferenLocationWithPiece()
+        {
+            var firstLocation = model.Locations[0];
+            var secondLocation = model.Locations[1];
+
+            Select(firstLocation);
+            Select(secondLocation);
+
+            Assert.AreSame(secondLocation, model.SelectedBoardLocation);
+            Assert.IsFalse(firstLocation.IsSelected);
+        }
+
+        [TestMethod]
+        public void SelectLocation_WithCurrentSelection_DifferLocationWithoutPiece()
+        {
+            var firstLocation = model.Locations[0];
+            var secondLocation = model.Locations[17];
+
+            Select(firstLocation);
+            Select(secondLocation);
+
+            Assert.IsNull(model.SelectedBoardLocation);
+            Assert.IsFalse(firstLocation.IsSelected);
+            Assert.IsFalse(secondLocation.IsSelected);
+        }
+
+
+        private bool CanSelect(BoardLocation location)
+        {
+            return model.CanExecuteCommand(ChessBoardViewModel.SelectLocationCommand, location, out handled);
+        }
+
+        private void Select(BoardLocation location)
+        {
+            model.ExecuteCommand(ChessBoardViewModel.SelectLocationCommand, location, out handled);
         }
     }
 }

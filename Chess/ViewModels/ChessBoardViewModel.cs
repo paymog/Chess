@@ -62,91 +62,76 @@ namespace Chess.ViewModels
         }
 
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
-        public static readonly RoutedCommand MovePieceHereCommand = new RoutedCommand();
 
         public ChessBoardViewModel()
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
-            base.RegisterCommand(MovePieceHereCommand, param => this.CanMovePieceHere(param as BoardLocation), param => this.MovePieceHere(param as BoardLocation));
-            
         }
 
         #region Commands
 
-        private bool CanMovePieceHere(BoardLocation location)
+        private bool CanSelectLocation(BoardLocation location)
         {
-            if(this.SelectedBoardLocation == null)
+            if (location.HasPiece && location.PieceColour() == this.CurrentPlayerColour)
             {
-                return false;
+                return true;
             }
-            return this.SelectedBoardLocation != location;
-        }
-
-        private void MovePieceHere(BoardLocation location)
-        {
-            if (this.CurrentPlayerColour == ChessColour.Black)
+            else if(this.SelectedBoardLocation != null && !location.HasPiece)
             {
-                this.CurrentPlayerColour = ChessColour.White;
+                return true;
             }
             else
             {
-                this.CurrentPlayerColour = ChessColour.Black;
+                return false;
             }
-            SelectedBoardLocation.IsSelected = false;
-            location.IsSelected = false;
 
-            location.Piece = SelectedBoardLocation.Piece;
-            SelectedBoardLocation.Piece = null;
-
-
-            this.SelectedBoardLocation = null;
-            this.UntargetAllLocations();
-
-        }
-
-        private bool CanSelectLocation(BoardLocation location)
-        {
-            return location.PieceColour() == this.CurrentPlayerColour;
         }
 
         private void SelectLocation(BoardLocation location)
         {
-            this.UntargetAllLocations();
-            //if nothing is selected, select this
+            UntargetAllLocations();
             if (this.SelectedBoardLocation == null)
             {
                 this.SelectedBoardLocation = location;
             }
-            //if something IS selected, deselect it and select the new one
-            else if (this.SelectedBoardLocation != location)
-            {
-                this.SelectedBoardLocation.IsSelected = false;
-                this.SelectedBoardLocation = location;
-            }
-            //we deselected our previous selection
             else
             {
-                this.SelectedBoardLocation = null;
+                if(location == this.SelectedBoardLocation)
+                {
+                    this.SelectedBoardLocation = null;
+                }
+                else if(location.HasPiece)
+                {
+                    this.SelectedBoardLocation.IsSelected = false;
+                    this.SelectedBoardLocation = location;
+                }
+                else
+                {
+                    this.MovePiece(this.SelectedBoardLocation, location);
+                    this.ToggleCurrentPlayerColour();
+                    this.SelectedBoardLocation.IsSelected = false;
+                    location.IsSelected = false;
+                    this.SelectedBoardLocation = null;
+                }
             }
 
-            this.TargetLocations(this.SelectedBoardLocation);
-
-
-
+            TargetLocations(this.SelectedBoardLocation);
         }
+
+        
 
         private void TargetLocations(BoardLocation location)
         {
-            if(location == null)
+            if (location == null)
             {
                 return;
             }
 
             ChessPiece piece = location.Piece;
             var ray = piece.GetRay(this.Locations.IndexOf(location));
-            for(int i = 0; i < ray.Count; i++)
+            for (int i = 0; i < ray.Count; i++)
             {
-                if(ray[i])
+                if (ray[i])
                 {
                     this.Locations[i].IsTargeted = true;
                 }
@@ -155,11 +140,29 @@ namespace Chess.ViewModels
 
         private void UntargetAllLocations()
         {
-            foreach(BoardLocation location in this.Locations)
+            foreach (BoardLocation location in this.Locations)
             {
                 location.IsTargeted = false;
             }
         }
         #endregion
+
+        private void ToggleCurrentPlayerColour()
+        {
+            if(this.CurrentPlayerColour == ChessColour.White)
+            {
+                this.CurrentPlayerColour = ChessColour.Black;
+            }
+            else
+            {
+                this.CurrentPlayerColour = ChessColour.White;
+            }
+        }
+
+        private void MovePiece(BoardLocation from, BoardLocation to)
+        {
+            to.Piece = from.Piece;
+            from.Piece = null;
+        }
     }
 }
