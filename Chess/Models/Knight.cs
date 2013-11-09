@@ -16,8 +16,8 @@ namespace Chess.Models
             var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var currRow = i / ChessBoard.NUM_COLUMNS;
-                var currCol = i % ChessBoard.NUM_COLUMNS;
+                var currRow = i / ChessBoard.DIMENSION;
+                var currCol = i % ChessBoard.DIMENSION;
 
                 var upLeft = new Tuple<int, int>(currRow - 2, currCol - 1);
                 var upRight = new Tuple<int, int>(currRow - 2, currCol + 1);
@@ -31,7 +31,7 @@ namespace Chess.Models
                 var downLeft = new Tuple<int, int>(currRow + 2, currCol - 1);
                 var downRight = new Tuple<int, int>(currRow + 2, currCol + 1);
 
-                rays.Add(ChessPiece.generateRay(upLeft, upRight, leftUp, leftDown, rightUp, rightDown, downLeft, downRight));
+                rays.Add(ChessPiece.GenerateRay(upLeft, upRight, leftUp, leftDown, rightUp, rightDown, downLeft, downRight));
             }
             RAYS = rays;
         }

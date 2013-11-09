@@ -23,7 +23,7 @@ namespace Chess.Models
         public abstract BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations);
 
         private readonly ChessColour _colour;
-        
+
         public ChessColour Colour { get { return this._colour; } }
 
         public ChessPiece(ChessColour colour)
@@ -36,20 +36,80 @@ namespace Chess.Models
             return this.Colour.ToString();
         }
 
-        private static bool isValidBoardLocation(int row, int column)
+        private static bool IsValidBoardLocation(int row, int column)
         {
-            return row >= 0 && row < ChessBoard.NUM_ROWS
-                && column >= 0 && column < ChessBoard.NUM_COLUMNS;
+            return row >= 0 && row < ChessBoard.DIMENSION
+                && column >= 0 && column < ChessBoard.DIMENSION;
         }
 
-        protected static BitArray generateRay(params Tuple<int, int>[] potentialLocations)
+        protected static BitArray GenerateRay(params Tuple<int, int>[] potentialLocations)
         {
             var result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-            foreach(Tuple<int, int> location in potentialLocations)
+            foreach (Tuple<int, int> location in potentialLocations)
             {
-                if(isValidBoardLocation(location.Item1, location.Item2))
+                if (IsValidBoardLocation(location.Item1, location.Item2))
                 {
-                    result[location.Item1*ChessBoard.NUM_COLUMNS + location.Item2] = true;
+                    result[ChessPiece.GetIndex(location.Item1, location.Item2)] = true;
+                }
+            }
+
+            return result;
+        }
+
+        private static int GetIndex(int row, int column)
+        {
+            return row * ChessBoard.DIMENSION + column;
+        }
+
+        /// <summary>
+        /// Not proud of this function (it's ugly, has poorly named variables, and is horrible for maintenence). Finds all blocked locations. It's hard to define being blocked so I'll give an example. Suppose you're at
+        /// you're at (3,4) (row, column). If there's a piece at (5,4) then (6,4) and (7,4) are blocked. This function
+        /// finds all blocked locations found on the column, row and diagonals of a given location
+        /// </summary>
+        /// <param name="location"></param>
+        /// <param name="whiteLocations"></param>
+        /// <param name="blackLocations"></param>
+        /// <returns>A bitarray where a 1 means that index is blocked and 0 means that index is not blocked</returns>
+        protected BitArray GetBlockedLocations(int location, BitArray whiteLocations, BitArray blackLocations)
+        {
+            var result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            var pieceLocations = new BitArray(whiteLocations).Or(blackLocations);
+
+            var row = location / ChessBoard.DIMENSION;
+            var column = location % ChessBoard.DIMENSION;
+
+            //I can't think of a good name or a succinct description for this variable. Sorry
+            var t = new List<Tuple<Func<int, int, int>, Func<int, int, int>>>();
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r - i, (c, i) => c - i)); //aboveleft
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r - i, (c, i) => c)); //above
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r - i, (c, i) => c + i)); //aboveright
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r, (c, i) => c + i)); //right
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r + i, (c, i) => c + i)); //belowright
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r + i, (c, i) => c)); //below
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r + i, (c, i) => c - i)); //below left
+            t.Add(new Tuple<Func<int, int, int>, Func<int, int, int>>((r, i) => r, (c, i) => c - i)); //left
+
+            foreach (var tuple in t)
+            {
+                var rowFunc = tuple.Item1;
+                var columnFunc = tuple.Item2;
+                var foundBlockingPiece = false;
+                for (int i = 1; i < ChessBoard.DIMENSION; i++)
+                {
+                    var newRow = rowFunc(row, i);
+                    var newCol = columnFunc(column, i);
+                    var index = GetIndex(newRow, newCol);
+                    if (IsValidBoardLocation(newRow, newCol))
+                    {
+                        if (foundBlockingPiece)
+                        {
+                            result[index] = true;
+                        }
+                        else
+                        {
+                            foundBlockingPiece = pieceLocations[index];
+                        }
+                    }
                 }
             }
 

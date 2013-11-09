@@ -19,8 +19,8 @@ namespace Chess.Models
 
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var currRow = i / ChessBoard.NUM_COLUMNS;
-                var currCol = i % ChessBoard.NUM_COLUMNS;
+                var currRow = i / ChessBoard.DIMENSION;
+                var currCol = i % ChessBoard.DIMENSION;
                 var blackLocations = new List<Tuple<int, int>>();
                 var whiteLocations = new List<Tuple<int, int>>();
 
@@ -42,8 +42,8 @@ namespace Chess.Models
                     whiteLocations.Add(new Tuple<int, int>(currRow - 2, currCol));
                 }
 
-                blackRays.Add(generateRay(blackLocations.ToArray()));
-                whiteRays.Add(generateRay(whiteLocations.ToArray()));
+                blackRays.Add(GenerateRay(blackLocations.ToArray()));
+                whiteRays.Add(GenerateRay(whiteLocations.ToArray()));
             }
             BLACK_RAYS = blackRays;
             WHITE_RAYS = whiteRays;

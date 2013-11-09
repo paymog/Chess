@@ -16,11 +16,11 @@ namespace Chess.Models
             var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                var currRow = i / ChessBoard.NUM_COLUMNS;
-                var currCol = i % ChessBoard.NUM_COLUMNS;
+                var currRow = i / ChessBoard.DIMENSION;
+                var currCol = i % ChessBoard.DIMENSION;
                 var locations = new List<Tuple<int, int>>();
 
-                for (int j = 1; j < Math.Max(ChessBoard.NUM_COLUMNS, ChessBoard.NUM_ROWS); j++ )
+                for (int j = 1; j < Math.Max(ChessBoard.DIMENSION, ChessBoard.DIMENSION); j++ )
                 {
                     locations.Add(new Tuple<int, int>(currRow + j, currCol + j));
                     locations.Add(new Tuple<int, int>(currRow - j, currCol + j));
@@ -29,7 +29,7 @@ namespace Chess.Models
                 }
 
 
-                rays.Add(ChessPiece.generateRay(locations.ToArray()));
+                rays.Add(ChessPiece.GenerateRay(locations.ToArray()));
             }
             RAYS = rays;
         }
@@ -45,7 +45,9 @@ namespace Chess.Models
 
         public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
-            return RAYS.ElementAt(location);
+            BitArray myColourLocations = this.Colour == ChessColour.Black ? blackLocations : whiteLocations;
+            var unblockedLocations = GetBlockedLocations(location, whiteLocations, blackLocations).Not();
+            return new BitArray(this.GetRay(location).And(myColourLocations.Not()).And(unblockedLocations));
         }
 
         public override BitArray GetRay(int location)

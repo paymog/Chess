@@ -21,11 +21,11 @@ namespace Chess.ViewModels
 
         public int NumRows
         {
-            get { return ChessBoard.NUM_ROWS; }
+            get { return ChessBoard.DIMENSION; }
         }
         public int NumColumns
         {
-            get { return ChessBoard.NUM_COLUMNS; }
+            get { return ChessBoard.DIMENSION; }
         }
 
 
@@ -83,11 +83,17 @@ namespace Chess.ViewModels
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
 
-            for(int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            GeneratePieceLocations();
+        }
+
+        private void GeneratePieceLocations()
+        {
+            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                if(this.Locations[i].HasPiece)
+                _blackLocations[i] = _whiteLocations[i] = false;
+                if (this.Locations[i].HasPiece)
                 {
-                    if(this.Locations[i].PieceColour == ChessColour.Black)
+                    if (this.Locations[i].PieceColour == ChessColour.Black)
                     {
                         _blackLocations[i] = true;
                     }
@@ -142,6 +148,7 @@ namespace Chess.ViewModels
                 {
                     this.MovePiece(this.SelectedBoardLocation, location);
                     this.ToggleCurrentPlayerColour();
+                    this.GeneratePieceLocations();
                     this.SelectedBoardLocation.IsSelected = false;
                     location.IsSelected = false;
                     this.SelectedBoardLocation = null;

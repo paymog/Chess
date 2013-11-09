@@ -10,9 +10,8 @@ namespace Chess.Models
 {
     public class ChessBoard
     {
-        public static readonly int NUM_ROWS = 8;
-        public static readonly int NUM_COLUMNS = 8;
-        public static readonly int NUM_LOCATIONS = NUM_ROWS * NUM_COLUMNS;
+        public static readonly int DIMENSION = 8;
+        public static readonly int NUM_LOCATIONS = DIMENSION * DIMENSION;
 
 
         private readonly ObservableCollection<BoardLocation> _locations;
@@ -72,9 +71,9 @@ namespace Chess.Models
         private ObservableCollection<BoardLocation> CreateChessBoard()
         {
             var result = new ObservableCollection<BoardLocation>();
-            for (int i = 0; i < NUM_ROWS; i++)
+            for (int i = 0; i < DIMENSION; i++)
             {
-                for (int j = 0; j < NUM_COLUMNS / 2; j++)
+                for (int j = 0; j < DIMENSION / 2; j++)
                 {
                     if (i % 2 == 0)
                     {

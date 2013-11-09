@@ -16,12 +16,12 @@ namespace Chess.Models
             var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                int currRow = i / ChessBoard.NUM_COLUMNS;
-                int currCol = i % ChessBoard.NUM_COLUMNS;
+                int currRow = i / ChessBoard.DIMENSION;
+                int currCol = i % ChessBoard.DIMENSION;
                 var locations = new List<Tuple<int, int>>();
 
                 //vertical moves
-                for (int j = 1; j < ChessBoard.NUM_ROWS; j++)
+                for (int j = 1; j < ChessBoard.DIMENSION; j++)
                 {
                     //moves above
                     var newRow = currRow - j;
@@ -33,7 +33,7 @@ namespace Chess.Models
                 }
 
                 //horizontal moves
-                for (int j = 1; j < ChessBoard.NUM_COLUMNS; j++)
+                for (int j = 1; j < ChessBoard.DIMENSION; j++)
                 {
                     //moves to left
                     var newCol = currCol - j;
@@ -44,7 +44,7 @@ namespace Chess.Models
                     locations.Add(new Tuple<int, int>(currRow, newCol));
                 }
 
-                rays.Add(ChessPiece.generateRay(locations.ToArray()));
+                rays.Add(ChessPiece.GenerateRay(locations.ToArray()));
             }
             RAYS = rays;
         }
@@ -62,7 +62,8 @@ namespace Chess.Models
         public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
             BitArray myColourLocations = this.Colour == ChessColour.Black ? blackLocations : whiteLocations;
-            return new BitArray(this.GetRay(location).And(myColourLocations.Not()));
+            var unblockedLocations = GetBlockedLocations(location, whiteLocations, blackLocations).Not();
+            return new BitArray(this.GetRay(location).And(myColourLocations.Not()).And(unblockedLocations));
         }
 
         public override BitArray GetRay(int location)
