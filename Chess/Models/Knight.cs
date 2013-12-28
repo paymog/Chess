@@ -48,7 +48,9 @@ namespace Chess.Models
 
         public override BitArray GetCorrectedRay(int location, BitArray whiteLocations, BitArray blackLocations)
         {
-            return RAYS.ElementAt(location);
+            BitArray myColourLocations = this.Colour == ChessColour.Black ? blackLocations : whiteLocations;
+
+            return GetRay(location).And(myColourLocations.Not());
         }
 
         public override BitArray GetRay(int location)
