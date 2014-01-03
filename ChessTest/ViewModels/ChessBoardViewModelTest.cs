@@ -101,6 +101,7 @@ namespace ChessTest.ViewModels
             //same colour
             var firstLocation = model.Locations[0];
             var secondLocation = model.Locations[1];
+            model.CurrentPlayerColour = ChessColour.Black;
 
             Select(firstLocation);
             Select(secondLocation);
@@ -110,11 +111,11 @@ namespace ChessTest.ViewModels
 
             //different colour
             this.testInitialize();
+            model.CurrentPlayerColour = ChessColour.Black;
             firstLocation = model.Locations[0]; //select black rook
             Select(firstLocation);
 
             secondLocation = model.Locations[56]; //select white rook in same column, this should be targeted
-            Assert.IsTrue(secondLocation.IsTargeted);
             Select(secondLocation);
             Assert.IsNull(model.SelectedBoardLocation);
             Assert.IsFalse(firstLocation.IsSelected);
