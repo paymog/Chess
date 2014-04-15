@@ -38,22 +38,23 @@ namespace Chess.Models
         {
             _locations = CreateChessBoard();
             CreateChessPieces();
+            GeneratePieceLocations();
         }
 
         public void GeneratePieceLocations()
         {
             for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
             {
-                BlackLocations[i] = WhiteLocations[i] = false;
+                _blackLocations[i] = _whiteLocations[i] = false;
                 if (this.Locations[i].HasPiece)
                 {
                     if (this.Locations[i].PieceColour == ChessColour.Black)
                     {
-                        BlackLocations[i] = true;
+                        _blackLocations[i] = true;
                     }
                     else
                     {
-                        WhiteLocations[i] = true;
+                        _whiteLocations[i] = true;
                     }
                 }
             }
