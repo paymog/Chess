@@ -224,7 +224,7 @@ namespace Chess.ViewModels
                  }
             }
 
-            return -1;
+            throw new System.InvalidOperationException("No king was found. A king should always be present.");
         }
 
 

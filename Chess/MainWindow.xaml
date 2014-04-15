@@ -4,7 +4,35 @@
         xmlns:view="clr-namespace:Chess.Views"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" x:Class="Chess.MainWindow"
         Title="MainWindow" Height="350" Width="525">
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="btvConverter"/>
+    </Window.Resources>
+    
     <Grid>
-        <view:ChessBoardView />
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Label x:Name="checkLabel" Grid.Row="0">
+            <Label.Style>
+                <Style TargetType="Label">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.BlackInCheck}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="Content" Value="Black in Check!"/>
+                        </DataTrigger>
+                        <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.WhiteInCheck}" Value="True">
+                            <Setter Property="Visibility" Value="Visible"/>
+                            <Setter Property="Content" Value="White in Check!"/>
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Label.Style> 
+        </Label>
+        <view:ChessBoardView  x:Name="board" Grid.Row="1"/>
+        
+        
     </Grid>
+    
 </Window>
