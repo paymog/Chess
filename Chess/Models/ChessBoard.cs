@@ -13,6 +13,8 @@ namespace Chess.Models
         public static readonly int DIMENSION = 8;
         public static readonly int NUM_LOCATIONS = DIMENSION * DIMENSION;
 
+        private BitArray _whiteLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+        private BitArray _blackLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
 
         private readonly ObservableCollection<BoardLocation> _locations;
         public ObservableCollection<BoardLocation> Locations
@@ -20,10 +22,47 @@ namespace Chess.Models
             get { return this._locations; }
         }
 
+        public BitArray WhiteLocations
+        {
+            get { return new BitArray(this._whiteLocations); }
+            private set { this._whiteLocations = new BitArray(value); }
+        }
+
+        public BitArray BlackLocations
+        {
+            get { return new BitArray(this._blackLocations); }
+            private set { this._blackLocations = new BitArray(value); }
+        }
+
         public ChessBoard()
         {
             _locations = CreateChessBoard();
             CreateChessPieces();
+        }
+
+        public void GeneratePieceLocations()
+        {
+            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            {
+                BlackLocations[i] = WhiteLocations[i] = false;
+                if (this.Locations[i].HasPiece)
+                {
+                    if (this.Locations[i].PieceColour == ChessColour.Black)
+                    {
+                        BlackLocations[i] = true;
+                    }
+                    else
+                    {
+                        WhiteLocations[i] = true;
+                    }
+                }
+            }
+        }
+
+        public void MovePiece(BoardLocation from, BoardLocation to)
+        {
+            to.Piece = from.Piece;
+            from.Piece = null;
         }
 
         private void CreateChessPieces()
@@ -87,6 +126,42 @@ namespace Chess.Models
                     }
                 }
             }
+            return result;
+        }
+
+        public bool IsPlayerInCheck(ChessColour playerToCheck)
+        {
+            int kingIndex = FindKingLocation(playerToCheck);
+            BitArray otherPlayerAttackVectors = GetAttackVectors(playerToCheck == ChessColour.Black ? ChessColour.White : ChessColour.Black);
+            return otherPlayerAttackVectors[kingIndex];
+        }
+
+        private int FindKingLocation(ChessColour chessColour)
+        {
+            for (int i = 0; i < this.Locations.Count; i++)
+            {
+                var piece = this.Locations[i].Piece;
+                if (piece is King && piece.Colour == chessColour)
+                {
+                    return i;
+                }
+            }
+
+            throw new System.InvalidOperationException("No king was found. A king should always be present.");
+        }
+
+        private BitArray GetAttackVectors(ChessColour chessColour)
+        {
+            BitArray result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            for (int i = 0; i < this.Locations.Count; i++)
+            {
+                var piece = this.Locations[i].Piece;
+                if (piece != null && piece.Colour == chessColour)
+                {
+                    result.Or(piece.GetCorrectedRay(i, WhiteLocations, BlackLocations));
+                }
+            }
+
             return result;
         }
     }

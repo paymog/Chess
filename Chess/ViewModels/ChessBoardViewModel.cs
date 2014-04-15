@@ -16,8 +16,6 @@ namespace Chess.ViewModels
         private readonly ChessBoard board = new ChessBoard();
         private ChessColour _currentPlayerColour = ChessColour.White;
         private BoardLocation _selectedBoardLocation = null;
-        private BitArray _whiteLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-        private BitArray _blackLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
         private bool _blackInCheck;
         private bool _whiteInCheck;
@@ -91,44 +89,15 @@ namespace Chess.ViewModels
             }
         }
 
-        private BitArray WhiteLocations
-        {
-            get { return new BitArray(this._whiteLocations); }
-            set { this._whiteLocations = new BitArray(value); }
-        }
 
-        private BitArray BlackLocations
-        {
-            get { return new BitArray(this._blackLocations); }
-            set { this._blackLocations = new BitArray(value); }
-        }
 
 
         public ChessBoardViewModel()
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
-
-            GeneratePieceLocations();
         }
 
-        private void GeneratePieceLocations()
-        {
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
-            {
-                _blackLocations[i] = _whiteLocations[i] = false;
-                if (this.Locations[i].HasPiece)
-                {
-                    if (this.Locations[i].PieceColour == ChessColour.Black)
-                    {
-                        _blackLocations[i] = true;
-                    }
-                    else
-                    {
-                        _whiteLocations[i] = true;
-                    }
-                }
-            }
-        }
+
 
         #region Commands
 
@@ -168,14 +137,16 @@ namespace Chess.ViewModels
                 }
                 else if (location.HasPiece && !location.IsTargeted && location.PieceColour == this.CurrentPlayerColour)
                 {
+                    // select another location of mine
                     this.SelectedBoardLocation.IsSelected = false;
                     this.SelectedBoardLocation = location;
                 }
                 else
                 {
-                    this.MovePiece(this.SelectedBoardLocation, location);
+                    // move piece. Can only be moved to a location that is targeted.
+                    board.MovePiece(this.SelectedBoardLocation, location);
                     this.ToggleCurrentPlayerColour();
-                    this.GeneratePieceLocations();
+                    board.GeneratePieceLocations();
                     this.SelectedBoardLocation.IsSelected = false;
                     location.IsSelected = false;
                     this.SelectedBoardLocation = null;
@@ -188,46 +159,9 @@ namespace Chess.ViewModels
 
         private void CheckForCheck()
         {
-            int blackKingIndex = FindKingLocation(ChessColour.Black);
-            int whiteKingIndex = FindKingLocation(ChessColour.White);
-
-            BitArray blackAttackVectors = GetAttackVectors(ChessColour.Black);
-            BitArray whiteAttackVectors = GetAttackVectors(ChessColour.White);
-
-            this.BlackInCheck = whiteAttackVectors[blackKingIndex];
-            this.WhiteInCheck = blackAttackVectors[whiteKingIndex];
+            this.BlackInCheck = board.IsPlayerInCheck(ChessColour.Black);
+            this.WhiteInCheck = board.IsPlayerInCheck(ChessColour.White);
         }
-
-        private BitArray GetAttackVectors(ChessColour chessColour)
-        {
-            BitArray result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-            for(int i = 0; i < this.Locations.Count; i++)
-            {
-                var piece = this.Locations[i].Piece;
-                if(piece != null && piece.Colour == chessColour)
-                {
-                    result.Or(piece.GetCorrectedRay(i, WhiteLocations, BlackLocations));
-                }
-            }
-
-            return result;
-        }
-
-        private int FindKingLocation(ChessColour chessColour)
-        {
-            for(int i = 0; i < this.Locations.Count; i++)
-            {
-                var piece = this.Locations[i].Piece;
-                 if(piece is King && piece.Colour == chessColour)
-                 {
-                     return i;
-                 }
-            }
-
-            throw new System.InvalidOperationException("No king was found. A king should always be present.");
-        }
-
-
 
         private void TargetLocations(BoardLocation location)
         {
@@ -237,7 +171,8 @@ namespace Chess.ViewModels
             }
 
             ChessPiece piece = location.Piece;
-            var ray = piece.GetCorrectedRay(this.Locations.IndexOf(location), this.WhiteLocations, this.BlackLocations);
+            var ray = piece.GetCorrectedRay(this.Locations.IndexOf(location), board.WhiteLocations, board.BlackLocations);
+
             for (int i = 0; i < ray.Count; i++)
             {
                 if (ray[i])
@@ -268,10 +203,6 @@ namespace Chess.ViewModels
             }
         }
 
-        private void MovePiece(BoardLocation from, BoardLocation to)
-        {
-            to.Piece = from.Piece;
-            from.Piece = null;
-        }
+
     }
 }
