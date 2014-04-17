@@ -20,6 +20,8 @@ namespace Chess.ViewModels
         private bool _blackInCheck;
         private bool _whiteInCheck;
 
+        #region Properties
+
         public int NumRows
         {
             get { return ChessBoard.DIMENSION; }
@@ -90,14 +92,12 @@ namespace Chess.ViewModels
         }
 
 
-
+        #endregion
 
         public ChessBoardViewModel()
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
         }
-
-
 
         #region Commands
 
@@ -137,7 +137,7 @@ namespace Chess.ViewModels
                 }
                 else if (location.HasPiece && !location.IsTargeted && location.PieceColour == this.CurrentPlayerColour)
                 {
-                    // select another location of mine
+                    // select another location of the player
                     this.SelectedBoardLocation.IsSelected = false;
                     this.SelectedBoardLocation = location;
                 }
@@ -146,7 +146,6 @@ namespace Chess.ViewModels
                     // move piece. Can only be moved to a location that is targeted.
                     board.MovePiece(this.SelectedBoardLocation, location);
                     this.ToggleCurrentPlayerColour();
-                    board.GeneratePieceLocations();
                     this.SelectedBoardLocation.IsSelected = false;
                     location.IsSelected = false;
                     this.SelectedBoardLocation = null;
@@ -154,10 +153,11 @@ namespace Chess.ViewModels
             }
 
             TargetLocations(this.SelectedBoardLocation);
-            CheckForCheck();
+            DetectCheck();
         }
-
-        private void CheckForCheck()
+        #endregion
+       
+        private void DetectCheck()
         {
             this.BlackInCheck = board.IsPlayerInCheck(ChessColour.Black);
             this.WhiteInCheck = board.IsPlayerInCheck(ChessColour.White);
@@ -171,7 +171,7 @@ namespace Chess.ViewModels
             }
 
             ChessPiece piece = location.Piece;
-            var ray = piece.GetCorrectedRay(this.Locations.IndexOf(location), board.WhiteLocations, board.BlackLocations);
+            var ray = board.getRay(piece, location);
 
             for (int i = 0; i < ray.Count; i++)
             {
@@ -189,8 +189,6 @@ namespace Chess.ViewModels
                 location.IsTargeted = false;
             }
         }
-        #endregion
-
         private void ToggleCurrentPlayerColour()
         {
             if (this.CurrentPlayerColour == ChessColour.White)
