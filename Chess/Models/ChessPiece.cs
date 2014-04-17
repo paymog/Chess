@@ -64,11 +64,15 @@ namespace Chess.Models
         /// <summary>
         /// Not proud of this function (it's ugly, has poorly named variables, and is horrible for maintenence). Finds all blocked locations. It's hard to define being blocked so I'll give an example. Suppose you're at
         /// you're at (3,4) (row, column). If there's a piece at (5,4) then (6,4) and (7,4) are blocked. This function
-        /// finds all blocked locations found on the column, row and diagonals of a given location
+        /// finds all blocked locations found on the column, row and diagonals of a given location.
+        /// 
+        /// Put another way this function finds all locations which are unreachable by any piece which moves in a straight line.
+        /// If there is a piece immediately to the left of a queen then all locations to the left of the piece are blocked and thus
+        /// unreachable by the queen. Similar arguments apply to diagonals and verticals.
         /// </summary>
-        /// <param name="location"></param>
-        /// <param name="whiteLocations"></param>
-        /// <param name="blackLocations"></param>
+        /// <param name="location">Based on the description above, the location of the queen</param>
+        /// <param name="whiteLocations">A bitarray representing the locations of the white piece</param>
+        /// <param name="blackLocations">A bitarray representing the locations of the black pieces</param>
         /// <returns>A bitarray where a 1 means that index is blocked and 0 means that index is not blocked</returns>
         protected BitArray GetBlockedLocations(int location, BitArray whiteLocations, BitArray blackLocations)
         {
