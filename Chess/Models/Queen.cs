@@ -13,10 +13,10 @@ namespace Chess.Models
 
         static Queen()
         {
-            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
+            var rays = new List<BitArray>(Chessboard.NumLocations);
             var bishop = new Bishop(ChessColour.Black);
             var rook = new Rook(ChessColour.Black);
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
                 rays.Add(bishop.GetRay(i).Or(rook.GetRay(i)));
             }

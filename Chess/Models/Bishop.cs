@@ -13,14 +13,14 @@ namespace Chess.Models
 
         static Bishop()
         {
-            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            var rays = new List<BitArray>(Chessboard.NumLocations);
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
-                var currRow = i / ChessBoard.DIMENSION;
-                var currCol = i % ChessBoard.DIMENSION;
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
                 var locations = new List<Tuple<int, int>>();
 
-                for (int j = 1; j < Math.Max(ChessBoard.DIMENSION, ChessBoard.DIMENSION); j++ )
+                for (int j = 1; j < Math.Max(Chessboard.Dimension, Chessboard.Dimension); j++ )
                 {
                     locations.Add(new Tuple<int, int>(currRow + j, currCol + j));
                     locations.Add(new Tuple<int, int>(currRow - j, currCol + j));

@@ -13,11 +13,11 @@ namespace Chess.Models
      
         static King()
         {
-            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            var rays = new List<BitArray>(Chessboard.NumLocations);
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
-                var currRow = i / ChessBoard.DIMENSION;
-                var currCol = i % ChessBoard.DIMENSION;
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
                 var topLeft = new Tuple<int, int>(currRow - 1, currCol - 1);
                 var top = new Tuple<int, int>(currRow - 1, currCol);
                 var topRight = new Tuple<int, int>(currRow - 1, currCol + 1);

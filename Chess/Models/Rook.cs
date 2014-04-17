@@ -13,15 +13,15 @@ namespace Chess.Models
 
         static Rook()
         {
-            var rays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            var rays = new List<BitArray>(Chessboard.NumLocations);
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
-                int currRow = i / ChessBoard.DIMENSION;
-                int currCol = i % ChessBoard.DIMENSION;
+                int currRow = i / Chessboard.Dimension;
+                int currCol = i % Chessboard.Dimension;
                 var locations = new List<Tuple<int, int>>();
 
                 //vertical moves
-                for (int j = 1; j < ChessBoard.DIMENSION; j++)
+                for (int j = 1; j < Chessboard.Dimension; j++)
                 {
                     //moves above
                     var newRow = currRow - j;
@@ -33,7 +33,7 @@ namespace Chess.Models
                 }
 
                 //horizontal moves
-                for (int j = 1; j < ChessBoard.DIMENSION; j++)
+                for (int j = 1; j < Chessboard.Dimension; j++)
                 {
                     //moves to left
                     var newCol = currCol - j;

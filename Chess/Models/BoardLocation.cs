@@ -14,7 +14,7 @@ namespace Chess.Models
         private readonly ChessColour _colour;
         private bool _isSelected = false;
         private bool _isTargeted = false;
-        private ChessPiece _piece = null;
+        private ChessPiece _piece;
 
         public ChessColour Colour
         {

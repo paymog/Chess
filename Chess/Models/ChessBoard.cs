@@ -8,13 +8,13 @@ using System.Threading.Tasks;
 
 namespace Chess.Models
 {
-    public class ChessBoard
+    public class Chessboard
     {
-        public static readonly int DIMENSION = 8;
-        public static readonly int NUM_LOCATIONS = DIMENSION * DIMENSION;
+        public static readonly int Dimension = 8;
+        public static readonly int NumLocations = Dimension * Dimension;
 
-        private BitArray _whiteLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-        private BitArray _blackLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+        private BitArray _whiteLocations = new BitArray(Chessboard.NumLocations, false);
+        private BitArray _blackLocations = new BitArray(Chessboard.NumLocations, false);
 
         private readonly ObservableCollection<BoardLocation> _locations;
         public ObservableCollection<BoardLocation> Locations
@@ -34,7 +34,7 @@ namespace Chess.Models
             private set { this._blackLocations = new BitArray(value); }
         }
 
-        public ChessBoard()
+        public Chessboard()
         {
             _locations = CreateChessBoard();
             CreateChessPieces();
@@ -45,7 +45,7 @@ namespace Chess.Models
         /// Private copy constructor. Used for copying.
         /// </summary>
         /// <param name="board"></param>
-        private ChessBoard(ChessBoard board)
+        private Chessboard(Chessboard board)
         {
             _locations = CreateChessBoard();
             for(int i = 0; i < board.Locations.Count; i++)
@@ -56,11 +56,11 @@ namespace Chess.Models
         }
 
 
-        public void GeneratePieceLocations()
+        private void GeneratePieceLocations()
         {
-            var whiteLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-            var blackLocations = new BitArray(ChessBoard.NUM_LOCATIONS, false);
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            var whiteLocations = new BitArray(Chessboard.NumLocations, false);
+            var blackLocations = new BitArray(Chessboard.NumLocations, false);
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
                 if (this.Locations[i].HasPiece)
                 {
@@ -81,6 +81,15 @@ namespace Chess.Models
 
         public void MovePiece(BoardLocation from, BoardLocation to)
         {
+            if (from == null)
+            {
+                throw new ArgumentNullException("from");
+            }
+            if(to == null)
+            {
+                throw new ArgumentNullException("to");
+            }
+
             var fromIndex = this.Locations.IndexOf(from);
             var toIndex = this.Locations.IndexOf(to);
 
@@ -160,12 +169,12 @@ namespace Chess.Models
             this.Locations[row * 8 + column].Piece = chessPiece;
         }
 
-        private ObservableCollection<BoardLocation> CreateChessBoard()
+        private static ObservableCollection<BoardLocation> CreateChessBoard()
         {
             var result = new ObservableCollection<BoardLocation>();
-            for (int i = 0; i < DIMENSION; i++)
+            for (int i = 0; i < Dimension; i++)
             {
-                for (int j = 0; j < DIMENSION / 2; j++)
+                for (int j = 0; j < Dimension / 2; j++)
                 {
                     if (i % 2 == 0)
                     {
@@ -205,7 +214,7 @@ namespace Chess.Models
 
         private BitArray GetAttackVectors(ChessColour chessColour)
         {
-            BitArray result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            BitArray result = new BitArray(Chessboard.NumLocations, false);
             for (int i = 0; i < this.Locations.Count; i++)
             {
                 var piece = this.Locations[i].Piece;
@@ -218,8 +227,17 @@ namespace Chess.Models
             return result;
         }
 
-        public BitArray getRay(ChessPiece piece, BoardLocation location)
+        public BitArray GetRay(ChessPiece piece, BoardLocation location)
         {
+            if(piece == null)
+            {
+                throw new ArgumentNullException("piece");
+            }
+            if(location == null)
+            {
+                throw new ArgumentNullException("location");
+            }
+
             var index = this.Locations.IndexOf(location);
             var ray = piece.GetCorrectedRay(index, this.WhiteLocations, this.BlackLocations);
             
@@ -242,7 +260,7 @@ namespace Chess.Models
                 var bit = potentialMoves[i];
                 if(bit)
                 {
-                    var board = new ChessBoard(this);
+                    var board = new Chessboard(this);
                     board.MovePiece(board.Locations[index], board.Locations[i]);
                     if(!board.IsPlayerInCheck(pieceColour))
                     {

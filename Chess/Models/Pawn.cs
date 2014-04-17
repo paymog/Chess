@@ -16,15 +16,15 @@ namespace Chess.Models
 
         static Pawn()
         {
-            var blackMovementRays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            var whiteMovementRays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            var blackAttackRays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
-            var whiteAttackRays = new List<BitArray>(ChessBoard.NUM_LOCATIONS);
+            var blackMovementRays = new List<BitArray>(Chessboard.NumLocations);
+            var whiteMovementRays = new List<BitArray>(Chessboard.NumLocations);
+            var blackAttackRays = new List<BitArray>(Chessboard.NumLocations);
+            var whiteAttackRays = new List<BitArray>(Chessboard.NumLocations);
 
-            for (int i = 0; i < ChessBoard.NUM_LOCATIONS; i++)
+            for (int i = 0; i < Chessboard.NumLocations; i++)
             {
-                var currRow = i / ChessBoard.DIMENSION;
-                var currCol = i % ChessBoard.DIMENSION;
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
                 var blackMovementLocations = new List<Tuple<int, int>>();
                 var whiteMovementLocations = new List<Tuple<int, int>>();
                 var blackAttackLocations = new List<Tuple<int, int>>();

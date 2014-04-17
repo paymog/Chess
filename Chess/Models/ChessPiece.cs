@@ -26,7 +26,7 @@ namespace Chess.Models
 
         public ChessColour Colour { get { return this._colour; } }
 
-        public ChessPiece(ChessColour colour)
+        protected ChessPiece(ChessColour colour)
         {
             this._colour = colour;
         }
@@ -38,13 +38,13 @@ namespace Chess.Models
 
         private static bool IsValidBoardLocation(int row, int column)
         {
-            return row >= 0 && row < ChessBoard.DIMENSION
-                && column >= 0 && column < ChessBoard.DIMENSION;
+            return row >= 0 && row < Chessboard.Dimension
+                && column >= 0 && column < Chessboard.Dimension;
         }
 
         protected static BitArray GenerateRay(params Tuple<int, int>[] potentialLocations)
         {
-            var result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            var result = new BitArray(Chessboard.NumLocations, false);
             foreach (Tuple<int, int> location in potentialLocations)
             {
                 if (IsValidBoardLocation(location.Item1, location.Item2))
@@ -58,7 +58,7 @@ namespace Chess.Models
 
         private static int GetIndex(int row, int column)
         {
-            return row * ChessBoard.DIMENSION + column;
+            return row * Chessboard.Dimension + column;
         }
 
         /// <summary>
@@ -72,11 +72,11 @@ namespace Chess.Models
         /// <returns>A bitarray where a 1 means that index is blocked and 0 means that index is not blocked</returns>
         protected BitArray GetBlockedLocations(int location, BitArray whiteLocations, BitArray blackLocations)
         {
-            var result = new BitArray(ChessBoard.NUM_LOCATIONS, false);
+            var result = new BitArray(Chessboard.NumLocations, false);
             var pieceLocations = new BitArray(whiteLocations).Or(blackLocations);
 
-            var row = location / ChessBoard.DIMENSION;
-            var column = location % ChessBoard.DIMENSION;
+            var row = location / Chessboard.Dimension;
+            var column = location % Chessboard.Dimension;
 
             //I can't think of a good name or a succinct description for this variable. Sorry
             var t = new List<Tuple<Func<int, int, int>, Func<int, int, int>>>();
@@ -94,7 +94,7 @@ namespace Chess.Models
                 var rowFunc = tuple.Item1;
                 var columnFunc = tuple.Item2;
                 var foundBlockingPiece = false;
-                for (int i = 1; i < ChessBoard.DIMENSION; i++)
+                for (int i = 1; i < Chessboard.Dimension; i++)
                 {
                     var newRow = rowFunc(row, i);
                     var newCol = columnFunc(column, i);

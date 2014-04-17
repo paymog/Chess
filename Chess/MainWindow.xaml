@@ -30,7 +30,7 @@
                 </Style>
             </Label.Style> 
         </Label>
-        <view:ChessBoardView  x:Name="board" Grid.Row="1"/>
+        <view:ChessboardView  x:Name="board" Grid.Row="1"/>
         
         
     </Grid>

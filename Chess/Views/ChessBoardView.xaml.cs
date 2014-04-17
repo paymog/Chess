@@ -18,9 +18,9 @@ namespace Chess.Views
     /// <summary>
     /// Interaction logic for ChessBoardView.xaml
     /// </summary>
-    public partial class ChessBoardView : UserControl
+    public partial class ChessboardView : UserControl
     {
-        public ChessBoardView()
+        public ChessboardView()
         {
             InitializeComponent();
         }

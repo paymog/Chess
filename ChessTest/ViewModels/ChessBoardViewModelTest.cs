@@ -8,13 +8,13 @@ namespace ChessTest.ViewModels
     [TestClass]
     public class ChessBoardViewModelTest
     {
-        private ChessBoardViewModel model;
+        private ChessboardViewModel model;
         private bool handled;
 
         [TestInitialize]
         public void testInitialize()
         {
-            this.model = new ChessBoardViewModel();
+            this.model = new ChessboardViewModel();
             this.handled = false;
         }
 
@@ -140,12 +140,12 @@ namespace ChessTest.ViewModels
 
         private bool CanSelect(BoardLocation location)
         {
-            return model.CanExecuteCommand(ChessBoardViewModel.SelectLocationCommand, location, out handled);
+            return model.CanExecuteCommand(ChessboardViewModel.SelectLocationCommand, location, out handled);
         }
 
         private void Select(BoardLocation location)
         {
-            model.ExecuteCommand(ChessBoardViewModel.SelectLocationCommand, location, out handled);
+            model.ExecuteCommand(ChessboardViewModel.SelectLocationCommand, location, out handled);
         }
     }
 }

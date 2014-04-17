@@ -11,9 +11,9 @@ using System.Windows.Input;
 
 namespace Chess.ViewModels
 {
-    public class ChessBoardViewModel : BaseViewModel
+    public class ChessboardViewModel : BaseViewModel
     {
-        private readonly ChessBoard board = new ChessBoard();
+        private readonly Chessboard board = new Chessboard();
         private ChessColour _currentPlayerColour = ChessColour.White;
         private BoardLocation _selectedBoardLocation = null;
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
@@ -22,13 +22,13 @@ namespace Chess.ViewModels
 
         #region Properties
 
-        public int NumRows
+        public static int NumRows
         {
-            get { return ChessBoard.DIMENSION; }
+            get { return Chessboard.Dimension; }
         }
-        public int NumColumns
+        public static int NumColumns
         {
-            get { return ChessBoard.DIMENSION; }
+            get { return Chessboard.Dimension; }
         }
 
         public ObservableCollection<BoardLocation> Locations
@@ -94,7 +94,7 @@ namespace Chess.ViewModels
 
         #endregion
 
-        public ChessBoardViewModel()
+        public ChessboardViewModel()
         {
             base.RegisterCommand(SelectLocationCommand, param => this.CanSelectLocation(param as BoardLocation), param => this.SelectLocation(param as BoardLocation));
         }
@@ -171,7 +171,7 @@ namespace Chess.ViewModels
             }
 
             ChessPiece piece = location.Piece;
-            var ray = board.getRay(piece, location);
+            var ray = board.GetRay(piece, location);
 
             for (int i = 0; i < ray.Count; i++)
             {
