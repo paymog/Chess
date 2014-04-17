@@ -9,9 +9,9 @@ namespace Chess.Models
 {
     public class Rook : ChessPiece
     {
-        private static readonly IReadOnlyCollection<BitArray> RAYS;
-
-        static Rook()
+        private static readonly IReadOnlyCollection<BitArray> RAYS = InitializeRays();
+        
+        private static IReadOnlyCollection<BitArray> InitializeRays()
         {
             var rays = new List<BitArray>(Chessboard.NumLocations);
             for (int i = 0; i < Chessboard.NumLocations; i++)
@@ -46,8 +46,9 @@ namespace Chess.Models
 
                 rays.Add(ChessPiece.GenerateRay(locations.ToArray()));
             }
-            RAYS = rays;
+            return rays;
         }
+
         public Rook(ChessColour colour)
             : base(colour)
         {

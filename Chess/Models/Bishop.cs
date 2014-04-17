@@ -9,9 +9,9 @@ namespace Chess.Models
 {
     public class Bishop: ChessPiece
     {
-        private static readonly IReadOnlyCollection<BitArray> RAYS;
+        private static readonly IReadOnlyCollection<BitArray> RAYS = InitializeRays();
 
-        static Bishop()
+        private static IReadOnlyCollection<BitArray> InitializeRays()
         {
             var rays = new List<BitArray>(Chessboard.NumLocations);
             for (int i = 0; i < Chessboard.NumLocations; i++)
@@ -20,7 +20,7 @@ namespace Chess.Models
                 var currCol = i % Chessboard.Dimension;
                 var locations = new List<Tuple<int, int>>();
 
-                for (int j = 1; j < Math.Max(Chessboard.Dimension, Chessboard.Dimension); j++ )
+                for (int j = 1; j < Math.Max(Chessboard.Dimension, Chessboard.Dimension); j++)
                 {
                     locations.Add(new Tuple<int, int>(currRow + j, currCol + j));
                     locations.Add(new Tuple<int, int>(currRow - j, currCol + j));
@@ -31,8 +31,9 @@ namespace Chess.Models
 
                 rays.Add(ChessPiece.GenerateRay(locations.ToArray()));
             }
-            RAYS = rays;
+            return rays;
         }
+
         public Bishop(ChessColour colour): base(colour)
         {
 

@@ -9,9 +9,9 @@ namespace Chess.Models
 {
     public class King: ChessPiece
     {
-        private static readonly IReadOnlyCollection<BitArray> RAYS;
-     
-        static King()
+        private static readonly IReadOnlyCollection<BitArray> RAYS = InitializeRays();
+
+        private static IReadOnlyCollection<BitArray> InitializeRays()
         {
             var rays = new List<BitArray>(Chessboard.NumLocations);
             for (int i = 0; i < Chessboard.NumLocations; i++)
@@ -29,8 +29,9 @@ namespace Chess.Models
 
                 rays.Add(ChessPiece.GenerateRay(topLeft, top, topRight, left, right, bottomLeft, bottom, bottomRight));
             }
-            RAYS = rays;
-        }
+            return rays;
+        }     
+
 
         public King(ChessColour colour): base(colour)
         {

@@ -9,55 +9,94 @@ namespace Chess.Models
 {
     public class Pawn : ChessPiece
     {
-        private static readonly IReadOnlyCollection<BitArray> BLACK_MOVEMENT_RAYS;
-        private static readonly IReadOnlyCollection<BitArray> WHITE_MOVEMENT_RAYS;
-        private static readonly IReadOnlyCollection<BitArray> BLACK_ATTACK_RAYS;
-        private static readonly IReadOnlyCollection<BitArray> WHITE_ATTACK_RAYS;
+        private static readonly IReadOnlyCollection<BitArray> BLACK_MOVEMENT_RAYS = InitializeBlackMovementRays();
+        private static readonly IReadOnlyCollection<BitArray> WHITE_MOVEMENT_RAYS = InitializeWhiteMovementRays();
+        private static readonly IReadOnlyCollection<BitArray> BLACK_ATTACK_RAYS = InitializeBlackAttackRays();
+        private static readonly IReadOnlyCollection<BitArray> WHITE_ATTACK_RAYS = InitializeWhiteAttackRays();
 
-        static Pawn()
+        #region Ray Initialization
+        private static IReadOnlyCollection<BitArray> InitializeBlackMovementRays()
         {
             var blackMovementRays = new List<BitArray>(Chessboard.NumLocations);
-            var whiteMovementRays = new List<BitArray>(Chessboard.NumLocations);
-            var blackAttackRays = new List<BitArray>(Chessboard.NumLocations);
-            var whiteAttackRays = new List<BitArray>(Chessboard.NumLocations);
 
             for (int i = 0; i < Chessboard.NumLocations; i++)
             {
                 var currRow = i / Chessboard.Dimension;
                 var currCol = i % Chessboard.Dimension;
                 var blackMovementLocations = new List<Tuple<int, int>>();
-                var whiteMovementLocations = new List<Tuple<int, int>>();
-                var blackAttackLocations = new List<Tuple<int, int>>();
-                var whiteAttackLocations = new List<Tuple<int, int>>();
 
                 blackMovementLocations.Add(new Tuple<int, int>(currRow + 1, currCol));
-                blackAttackLocations.Add(new Tuple<int, int>(currRow + 1, currCol - 1));
-                blackAttackLocations.Add(new Tuple<int, int>(currRow + 1, currCol + 1));
-
-                whiteMovementLocations.Add(new Tuple<int, int>(currRow - 1, currCol));
-                whiteAttackLocations.Add(new Tuple<int, int>(currRow - 1, currCol - 1));
-                whiteAttackLocations.Add(new Tuple<int, int>(currRow - 1, currCol + 1));
 
                 //home row can move two places
                 if (currRow == 1)
                 {
                     blackMovementLocations.Add(new Tuple<int, int>(currRow + 2, currCol));
                 }
+
+                blackMovementRays.Add(GenerateRay(blackMovementLocations.ToArray()));
+            }
+            return blackMovementRays;
+        }
+        private static IReadOnlyCollection<BitArray> InitializeWhiteMovementRays()
+        {
+            var whiteMovementRays = new List<BitArray>(Chessboard.NumLocations);
+
+            for (int i = 0; i < Chessboard.NumLocations; i++)
+            {
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
+                var whiteMovementLocations = new List<Tuple<int, int>>();
+
+
+                whiteMovementLocations.Add(new Tuple<int, int>(currRow - 1, currCol));
+
+                //home row can move two places
                 if (currRow == 6)
                 {
                     whiteMovementLocations.Add(new Tuple<int, int>(currRow - 2, currCol));
                 }
 
-                blackMovementRays.Add(GenerateRay(blackMovementLocations.ToArray()));
                 whiteMovementRays.Add(GenerateRay(whiteMovementLocations.ToArray()));
+            }
+            return whiteMovementRays;
+        }
+        private static IReadOnlyCollection<BitArray> InitializeBlackAttackRays()
+        {
+            var blackAttackRays = new List<BitArray>(Chessboard.NumLocations);
+
+            for (int i = 0; i < Chessboard.NumLocations; i++)
+            {
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
+                var blackAttackLocations = new List<Tuple<int, int>>();
+
+                blackAttackLocations.Add(new Tuple<int, int>(currRow + 1, currCol - 1));
+                blackAttackLocations.Add(new Tuple<int, int>(currRow + 1, currCol + 1));
+
                 blackAttackRays.Add(GenerateRay(blackAttackLocations.ToArray()));
+            }
+            return blackAttackRays;
+        }
+        private static IReadOnlyCollection<BitArray> InitializeWhiteAttackRays()
+        {
+            var whiteAttackRays = new List<BitArray>(Chessboard.NumLocations);
+
+            for (int i = 0; i < Chessboard.NumLocations; i++)
+            {
+                var currRow = i / Chessboard.Dimension;
+                var currCol = i % Chessboard.Dimension;
+                var whiteAttackLocations = new List<Tuple<int, int>>();
+
+                whiteAttackLocations.Add(new Tuple<int, int>(currRow - 1, currCol - 1));
+                whiteAttackLocations.Add(new Tuple<int, int>(currRow - 1, currCol + 1));
+
                 whiteAttackRays.Add(GenerateRay(whiteAttackLocations.ToArray()));
             }
-            BLACK_MOVEMENT_RAYS = blackMovementRays;
-            WHITE_MOVEMENT_RAYS = whiteMovementRays;
-            BLACK_ATTACK_RAYS = blackAttackRays;
-            WHITE_ATTACK_RAYS = whiteAttackRays;
+            return whiteAttackRays;
         }
+
+        #endregion
+
         public Pawn(ChessColour color)
             : base(color)
         {
