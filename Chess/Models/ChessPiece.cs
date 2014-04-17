@@ -36,30 +36,21 @@ namespace Chess.Models
             return this.Colour.ToString();
         }
 
-        private static bool IsValidBoardLocation(int row, int column)
-        {
-            return row >= 0 && row < Chessboard.Dimension
-                && column >= 0 && column < Chessboard.Dimension;
-        }
-
         protected static BitArray GenerateRay(params Tuple<int, int>[] potentialLocations)
         {
             var result = new BitArray(Chessboard.NumLocations, false);
             foreach (Tuple<int, int> location in potentialLocations)
             {
-                if (IsValidBoardLocation(location.Item1, location.Item2))
+                if (Chessboard.IsValidBoardLocation(location.Item1, location.Item2))
                 {
-                    result[ChessPiece.GetIndex(location.Item1, location.Item2)] = true;
+                    result[Chessboard.GetIndex(location.Item1, location.Item2)] = true;
                 }
             }
 
             return result;
         }
 
-        private static int GetIndex(int row, int column)
-        {
-            return row * Chessboard.Dimension + column;
-        }
+
 
         /// <summary>
         /// Not proud of this function (it's ugly, has poorly named variables, and is horrible for maintenence). Finds all blocked locations. It's hard to define being blocked so I'll give an example. Suppose you're at
@@ -102,8 +93,8 @@ namespace Chess.Models
                 {
                     var newRow = rowFunc(row, i);
                     var newCol = columnFunc(column, i);
-                    var index = GetIndex(newRow, newCol);
-                    if (IsValidBoardLocation(newRow, newCol))
+                    var index = Chessboard.GetIndex(newRow, newCol);
+                    if (Chessboard.IsValidBoardLocation(newRow, newCol))
                     {
                         if (foundBlockingPiece)
                         {

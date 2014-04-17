@@ -273,6 +273,15 @@ namespace Chess.Models
 
         }
 
+        public static int GetIndex(int row, int column)
+        {
+            return row * Chessboard.Dimension + column;
+        }
 
+        public static bool IsValidBoardLocation(int row, int column)
+        {
+            return row >= 0 && row < Chessboard.Dimension
+                && column >= 0 && column < Chessboard.Dimension;
+        }
     }
 }
