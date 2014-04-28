@@ -41,6 +41,55 @@ namespace Chess.Models
             UpdatePieceLocations();
         }
 
+        public void MovePiece(BoardLocation from, BoardLocation to)
+        {
+            if (from == null)
+            {
+                throw new ArgumentNullException("from");
+            }
+            if (to == null)
+            {
+                throw new ArgumentNullException("to");
+            }
+
+            this.MovePiece(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
+        }
+
+        public bool IsPlayerInCheck(ChessColour playerToCheck)
+        {
+            int kingIndex = FindKingLocation(playerToCheck);
+            BitArray otherPlayerAttackVectors = GetAttackVectors(playerToCheck == ChessColour.Black ? ChessColour.White : ChessColour.Black);
+            return otherPlayerAttackVectors[kingIndex];
+        }
+
+        public static int GetIndex(int row, int column)
+        {
+            return row * Chessboard.Dimension + column;
+        }
+
+        public static bool IsValidBoardLocation(int row, int column)
+        {
+            return row >= 0 && row < Chessboard.Dimension
+                && column >= 0 && column < Chessboard.Dimension;
+        }
+
+        public BitArray GetRay(ChessPiece piece, BoardLocation location)
+        {
+            if (piece == null)
+            {
+                throw new ArgumentNullException("piece");
+            }
+            if (location == null)
+            {
+                throw new ArgumentNullException("location");
+            }
+
+            var index = this.Locations.IndexOf(location);
+            var ray = piece.GetCorrectedRay(index, this.WhiteLocations, this.BlackLocations);
+
+            return this.GetCheckPreventionRay(ray, index, piece.Colour);
+        }
+
         /// <summary>
         /// Private copy constructor. Used for copying.
         /// </summary>
@@ -132,19 +181,7 @@ namespace Chess.Models
 
         }
 
-        public void MovePiece(BoardLocation from, BoardLocation to)
-        {
-            if (from == null)
-            {
-                throw new ArgumentNullException("from");
-            }
-            if (to == null)
-            {
-                throw new ArgumentNullException("to");
-            }
-
-            this.MovePiece(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
-        }
+        
 
         private void CreateChessPieces()
         {
@@ -210,12 +247,7 @@ namespace Chess.Models
             return result;
         }
 
-        public bool IsPlayerInCheck(ChessColour playerToCheck)
-        {
-            int kingIndex = FindKingLocation(playerToCheck);
-            BitArray otherPlayerAttackVectors = GetAttackVectors(playerToCheck == ChessColour.Black ? ChessColour.White : ChessColour.Black);
-            return otherPlayerAttackVectors[kingIndex];
-        }
+        
 
         private int FindKingLocation(ChessColour chessColour)
         {
@@ -246,22 +278,7 @@ namespace Chess.Models
             return result;
         }
 
-        public BitArray GetRay(ChessPiece piece, BoardLocation location)
-        {
-            if(piece == null)
-            {
-                throw new ArgumentNullException("piece");
-            }
-            if(location == null)
-            {
-                throw new ArgumentNullException("location");
-            }
-
-            var index = this.Locations.IndexOf(location);
-            var ray = piece.GetCorrectedRay(index, this.WhiteLocations, this.BlackLocations);
-            
-            return this.GetCheckPreventionRay(ray, index, piece.Colour);
-        }
+        
 
         /// <summary>
         /// Given a ray of potential moves (assuming the player isn't in check), this method will generate a ray
@@ -293,15 +310,6 @@ namespace Chess.Models
 
         }
 
-        public static int GetIndex(int row, int column)
-        {
-            return row * Chessboard.Dimension + column;
-        }
-
-        public static bool IsValidBoardLocation(int row, int column)
-        {
-            return row >= 0 && row < Chessboard.Dimension
-                && column >= 0 && column < Chessboard.Dimension;
-        }
+        
     }
 }
