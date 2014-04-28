@@ -73,15 +73,17 @@ namespace Chess.Models
                 && column >= 0 && column < Chessboard.Dimension;
         }
 
-        public BitArray GetRay(ChessPiece piece, BoardLocation location)
+        public BitArray GetRay(BoardLocation location)
         {
-            if (piece == null)
-            {
-                throw new ArgumentNullException("piece");
-            }
             if (location == null)
             {
                 throw new ArgumentNullException("location");
+            }
+
+            var piece = location.Piece;
+            if (piece == null)
+            {
+                throw new ArgumentException("Expected location to have a piece but it doesn't");
             }
 
             var index = this.Locations.IndexOf(location);

@@ -19,6 +19,7 @@ namespace Chess.ViewModels
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
         private bool _blackInCheck;
         private bool _whiteInCheck;
+        private bool _checkMate;
 
         #region Properties
 
@@ -91,6 +92,15 @@ namespace Chess.ViewModels
             }
         }
 
+        public bool CheckMate
+        {
+            get { return _checkMate; }
+            set
+            {
+                this._checkMate = value;
+                base.RaisePropertyChanged(() => this.CheckMate);
+            }
+        }
 
         #endregion
 
@@ -154,6 +164,7 @@ namespace Chess.ViewModels
 
             TargetLocations(this.SelectedBoardLocation);
             DetectCheck();
+            DetectCheckmate();
         }
         #endregion
        
@@ -161,6 +172,42 @@ namespace Chess.ViewModels
         {
             this.BlackInCheck = board.IsPlayerInCheck(ChessColour.Black);
             this.WhiteInCheck = board.IsPlayerInCheck(ChessColour.White);
+        }
+
+        private void DetectCheckmate()
+        {
+            var possibleMoves = new BitArray(Chessboard.NumLocations, false);
+            if(BlackInCheck)
+            {
+                possibleMoves = GetAllPossibleMoves(ChessColour.Black);
+            }
+            else if(WhiteInCheck)
+            {
+                possibleMoves = GetAllPossibleMoves(ChessColour.White);
+            }
+            
+            // if there are any possible moves, there isn't checkmate
+            for(int i = 0; i < possibleMoves.Count; i++)
+            {
+                if (possibleMoves[i])
+                {
+                    CheckMate = false;
+                }
+            }
+            CheckMate = true;
+        }
+
+        private BitArray GetAllPossibleMoves(ChessColour colour)
+        {
+            var possibleMoves = new BitArray(Chessboard.NumLocations, false);
+            foreach (var location in Locations)
+            {
+                if (location.HasPiece && location.PieceColour == colour)
+                {
+                    possibleMoves.Or(board.GetRay(location));
+                }
+            }
+            return possibleMoves;
         }
 
         private void TargetLocations(BoardLocation location)
@@ -171,7 +218,7 @@ namespace Chess.ViewModels
             }
 
             ChessPiece piece = location.Piece;
-            var ray = board.GetRay(piece, location);
+            var ray = board.GetRay(location);
 
             for (int i = 0; i < ray.Count; i++)
             {
@@ -202,5 +249,7 @@ namespace Chess.ViewModels
         }
 
 
+
+        
     }
 }

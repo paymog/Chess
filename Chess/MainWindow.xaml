@@ -13,23 +13,38 @@
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Label x:Name="checkLabel" Grid.Row="0">
-            <Label.Style>
-                <Style TargetType="Label">
-                    <Setter Property="Visibility" Value="Collapsed"/>
-                    <Style.Triggers>
-                        <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.BlackInCheck}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Setter Property="Content" Value="Black in Check!"/>
-                        </DataTrigger>
-                        <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.WhiteInCheck}" Value="True">
-                            <Setter Property="Visibility" Value="Visible"/>
-                            <Setter Property="Content" Value="White in Check!"/>
-                        </DataTrigger>
-                    </Style.Triggers>
-                </Style>
-            </Label.Style> 
-        </Label>
+        <StackPanel Grid.Row="0">
+            <Label x:Name="checkLabel">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Visibility" Value="Collapsed"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.BlackInCheck}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="Content" Value="Black in Check!"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.WhiteInCheck}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="Content" Value="White in Check!"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>
+            <Label x:Name="checkMateLabel" Content="Checkmate!">
+                <Label.Style>
+                    <Style TargetType="Label">
+                        <Setter Property="Visibility" Value="Hidden"/>
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.CheckMate}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Label.Style>
+            </Label>  
+        </StackPanel>
+        
         <view:ChessboardView  x:Name="board" Grid.Row="1"/>
         
         
