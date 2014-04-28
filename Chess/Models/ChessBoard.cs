@@ -38,7 +38,7 @@ namespace Chess.Models
         {
             _locations = CreateChessBoard();
             CreateChessPieces();
-            GeneratePieceLocations();
+            UpdatePieceLocations();
         }
 
         /// <summary>
@@ -52,11 +52,13 @@ namespace Chess.Models
             {
                 Locations[i].Piece = board.Locations[i].Piece;
             }
-            GeneratePieceLocations();
+            UpdatePieceLocations();
         }
 
-
-        private void GeneratePieceLocations()
+        /// <summary>
+        /// Updates WhiteLocations and BlackLocations to accurately reflect the locations of the black and white pieces
+        /// </summary>
+        private void UpdatePieceLocations()
         {
             var whiteLocations = new BitArray(Chessboard.NumLocations, false);
             var blackLocations = new BitArray(Chessboard.NumLocations, false);
@@ -79,30 +81,33 @@ namespace Chess.Models
             this.BlackLocations = blackLocations;
         }
 
-        public void MovePiece(BoardLocation from, BoardLocation to)
+        private void MovePiece(int fromIndex, int toIndex)
         {
-            if (from == null)
-            {
-                throw new ArgumentNullException("from");
-            }
-            if(to == null)
-            {
-                throw new ArgumentNullException("to");
-            }
+            this.MovePiece(Locations[fromIndex], fromIndex, Locations[toIndex], toIndex);
+        }
 
-            var fromIndex = this.Locations.IndexOf(from);
-            var toIndex = this.Locations.IndexOf(to);
+        private void MovePiece(BoardLocation from, int fromIndex, BoardLocation to, int toIndex)
+        {
+            
+            if (fromIndex < 0 || fromIndex >= Chessboard.NumLocations)
+            {
+                throw new ArgumentOutOfRangeException("fromIndex");
+            }
+            if (toIndex < 0 || toIndex >= Chessboard.NumLocations)
+            {
+                throw new ArgumentOutOfRangeException("toIndex");
+            }
 
             var oldBlackLocations = this.BlackLocations;
             var oldWhiteLocations = this.WhiteLocations;
 
-            if(from.PieceColour == ChessColour.Black)
+            if (from.PieceColour == ChessColour.Black)
             {
                 oldBlackLocations[fromIndex] = false;
                 oldBlackLocations[toIndex] = true;
 
                 // if a piece of the other player is being taken
-                if(to.HasPiece)
+                if (to.HasPiece)
                 {
                     oldWhiteLocations[toIndex] = false;
                 }
@@ -112,12 +117,12 @@ namespace Chess.Models
                 oldWhiteLocations[fromIndex] = false;
                 oldWhiteLocations[toIndex] = true;
 
-                if(to.HasPiece)
+                if (to.HasPiece)
                 {
                     oldBlackLocations[toIndex] = false;
                 }
             }
-            
+
 
             BlackLocations = oldBlackLocations;
             WhiteLocations = oldWhiteLocations;
@@ -125,6 +130,20 @@ namespace Chess.Models
             to.Piece = from.Piece;
             from.Piece = null;
 
+        }
+
+        public void MovePiece(BoardLocation from, BoardLocation to)
+        {
+            if (from == null)
+            {
+                throw new ArgumentNullException("from");
+            }
+            if (to == null)
+            {
+                throw new ArgumentNullException("to");
+            }
+
+            this.MovePiece(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
         }
 
         private void CreateChessPieces()
@@ -243,6 +262,7 @@ namespace Chess.Models
             
             return this.GetCheckPreventionRay(ray, index, piece.Colour);
         }
+
         /// <summary>
         /// Given a ray of potential moves (assuming the player isn't in check), this method will generate a ray
         /// a new ray which eliminates any of the potential moves which result in check.
@@ -261,7 +281,7 @@ namespace Chess.Models
                 if(bit)
                 {
                     var board = new Chessboard(this);
-                    board.MovePiece(board.Locations[index], board.Locations[i]);
+                    board.MovePiece(index, i);
                     if(!board.IsPlayerInCheck(pieceColour))
                     {
                         ray[i] = true;
