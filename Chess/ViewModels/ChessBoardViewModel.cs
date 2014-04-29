@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Chess;
 
 namespace Chess.ViewModels
 {
@@ -17,9 +18,10 @@ namespace Chess.ViewModels
         private ChessColour _currentPlayerColour = ChessColour.White;
         private BoardLocation _selectedBoardLocation = null;
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
-        private bool _blackInCheck;
-        private bool _whiteInCheck;
-        private bool _checkMate;
+        private bool _blackInCheck = false;
+        private bool _whiteInCheck = false;
+        private bool _checkMate = false;
+        private bool _staleMate = false;
 
         #region Properties
 
@@ -102,6 +104,16 @@ namespace Chess.ViewModels
             }
         }
 
+        public bool StaleMate
+        {
+            get { return _staleMate; }
+            set
+            {
+                this._staleMate = value;
+                base.RaisePropertyChanged(() => this.StaleMate);
+            }
+        }
+
         #endregion
 
         public ChessboardViewModel()
@@ -165,6 +177,7 @@ namespace Chess.ViewModels
             TargetLocations(this.SelectedBoardLocation);
             DetectCheck();
             DetectCheckmate();
+            DetectStalemate();
         }
         #endregion
        
@@ -174,6 +187,10 @@ namespace Chess.ViewModels
             this.WhiteInCheck = board.IsPlayerInCheck(ChessColour.White);
         }
 
+        /// <summary>
+        /// Detects checkmate and updates the appropriate property. Requires that CheckDetection be
+        /// done prior to calling this method.
+        /// </summary>
         private void DetectCheckmate()
         {
             var possibleMoves = new BitArray(Chessboard.NumLocations, false);
@@ -186,15 +203,20 @@ namespace Chess.ViewModels
                 possibleMoves = GetAllPossibleMoves(ChessColour.White);
             }
             
-            // if there are any possible moves, there isn't checkmate
-            for(int i = 0; i < possibleMoves.Count; i++)
+            CheckMate = !possibleMoves.HasTrue();
+        }
+
+        
+        private void DetectStalemate()
+        {
+            if(BlackInCheck || WhiteInCheck)
             {
-                if (possibleMoves[i])
-                {
-                    CheckMate = false;
-                }
+                return;
             }
-            CheckMate = true;
+
+            var possibleMoves = this.GetAllPossibleMoves(this.CurrentPlayerColour);
+
+            StaleMate = !possibleMoves.HasTrue();
         }
 
         private BitArray GetAllPossibleMoves(ChessColour colour)
