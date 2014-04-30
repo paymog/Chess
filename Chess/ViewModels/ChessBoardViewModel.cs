@@ -193,7 +193,7 @@ namespace Chess.ViewModels
         /// </summary>
         private void DetectCheckmate()
         {
-            var possibleMoves = new BitArray(Chessboard.NumLocations, false);
+            var possibleMoves = new BitArray(Chessboard.NumLocations, true);
             if(BlackInCheck)
             {
                 possibleMoves = GetAllPossibleMoves(ChessColour.Black);

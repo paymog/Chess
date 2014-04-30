@@ -36,11 +36,11 @@
                     <Style TargetType="Label">
                         <Setter Property="Visibility" Value="Hidden"/>
                         <Style.Triggers>
-                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.CheckMate}" Value="True">
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.Checkmate}" Value="True">
                                 <Setter Property="Visibility" Value="Visible"/>
                                 <Setter Property="Content" Value="Checkmate!"/>
                             </DataTrigger>
-                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.StaleMate}" Value="True">
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.Stalemate}" Value="True">
                                 <Setter Property="Visibility" Value="Visible"/>
                                 <Setter Property="Content" Value="Stalemate!"/>
                             </DataTrigger>
