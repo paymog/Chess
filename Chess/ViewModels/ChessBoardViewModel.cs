@@ -20,16 +20,16 @@ namespace Chess.ViewModels
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
         private bool _blackInCheck = false;
         private bool _whiteInCheck = false;
-        private bool _checkMate = false;
-        private bool _staleMate = false;
+        private bool _checkmate = false;
+        private bool _stalemate = false;
 
         #region Properties
 
-        public static int NumRows
+        public static int RowCount
         {
             get { return Chessboard.Dimension; }
         }
-        public static int NumColumns
+        public static int ColumnCount
         {
             get { return Chessboard.Dimension; }
         }
@@ -94,23 +94,23 @@ namespace Chess.ViewModels
             }
         }
 
-        public bool CheckMate
+        public bool Checkmate
         {
-            get { return _checkMate; }
+            get { return _checkmate; }
             set
             {
-                this._checkMate = value;
-                base.RaisePropertyChanged(() => this.CheckMate);
+                this._checkmate = value;
+                base.RaisePropertyChanged(() => this.Checkmate);
             }
         }
 
-        public bool StaleMate
+        public bool Stalemate
         {
-            get { return _staleMate; }
+            get { return _stalemate; }
             set
             {
-                this._staleMate = value;
-                base.RaisePropertyChanged(() => this.StaleMate);
+                this._stalemate = value;
+                base.RaisePropertyChanged(() => this.Stalemate);
             }
         }
 
@@ -203,7 +203,7 @@ namespace Chess.ViewModels
                 possibleMoves = GetAllPossibleMoves(ChessColour.White);
             }
             
-            CheckMate = !possibleMoves.HasTrue();
+            Checkmate = !possibleMoves.HasTrue();
         }
 
         
@@ -216,9 +216,10 @@ namespace Chess.ViewModels
 
             var possibleMoves = this.GetAllPossibleMoves(this.CurrentPlayerColour);
 
-            StaleMate = !possibleMoves.HasTrue();
+            Stalemate = !possibleMoves.HasTrue();
         }
 
+        
         private BitArray GetAllPossibleMoves(ChessColour colour)
         {
             var possibleMoves = new BitArray(Chessboard.NumLocations, false);

@@ -34,6 +34,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="MVVMToolkit">
@@ -68,6 +69,7 @@
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Bishop.cs" />
     <Compile Include="Models\ChessBoard.cs" />
+    <Compile Include="AI\ChessboardEvaluator.cs" />
     <Compile Include="Models\King.cs" />
     <Compile Include="Models\Knight.cs" />
     <Compile Include="Models\Pawn.cs" />

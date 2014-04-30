@@ -31,13 +31,18 @@
                     </Style>
                 </Label.Style>
             </Label>
-            <Label x:Name="checkMateLabel" Content="Checkmate!">
+            <Label x:Name="mateLabel" >
                 <Label.Style>
                     <Style TargetType="Label">
                         <Setter Property="Visibility" Value="Hidden"/>
                         <Style.Triggers>
                             <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.CheckMate}" Value="True">
                                 <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="Content" Value="Checkmate!"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=board, Path=DataContext.StaleMate}" Value="True">
+                                <Setter Property="Visibility" Value="Visible"/>
+                                <Setter Property="Content" Value="Stalemate!"/>
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
