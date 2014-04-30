@@ -180,58 +180,25 @@ namespace Chess.ViewModels
             DetectStalemate();
         }
         #endregion
-       
+
         private void DetectCheck()
         {
             this.BlackInCheck = board.IsPlayerInCheck(ChessColour.Black);
             this.WhiteInCheck = board.IsPlayerInCheck(ChessColour.White);
         }
 
-        /// <summary>
-        /// Detects checkmate and updates the appropriate property. Requires that CheckDetection be
-        /// done prior to calling this method.
-        /// </summary>
         private void DetectCheckmate()
         {
-            var possibleMoves = new BitArray(Chessboard.NumLocations, true);
-            if(BlackInCheck)
-            {
-                possibleMoves = GetAllPossibleMoves(ChessColour.Black);
-            }
-            else if(WhiteInCheck)
-            {
-                possibleMoves = GetAllPossibleMoves(ChessColour.White);
-            }
-            
-            Checkmate = !possibleMoves.HasTrue();
+            Checkmate = board.IsPlayerInCheckmate(CurrentPlayerColour);
         }
 
-        
         private void DetectStalemate()
         {
-            if(BlackInCheck || WhiteInCheck)
-            {
-                return;
-            }
-
-            var possibleMoves = this.GetAllPossibleMoves(this.CurrentPlayerColour);
-
-            Stalemate = !possibleMoves.HasTrue();
+            Stalemate = board.IsPlayerInStalemate(CurrentPlayerColour);
         }
 
-        
-        private BitArray GetAllPossibleMoves(ChessColour colour)
-        {
-            var possibleMoves = new BitArray(Chessboard.NumLocations, false);
-            foreach (var location in Locations)
-            {
-                if (location.HasPiece && location.PieceColour == colour)
-                {
-                    possibleMoves.Or(board.GetRay(location));
-                }
-            }
-            return possibleMoves;
-        }
+
+
 
         private void TargetLocations(BoardLocation location)
         {
@@ -273,6 +240,6 @@ namespace Chess.ViewModels
 
 
 
-        
+
     }
 }

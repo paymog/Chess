@@ -62,6 +62,31 @@ namespace Chess.Models
             return otherPlayerAttackVectors[kingIndex];
         }
 
+        public bool IsPlayerInCheckmate(ChessColour player)
+        {
+            if (IsPlayerInCheck(player))
+            {
+                return !GetAllPossibleMoves(player).HasTrue();
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public bool IsPlayerInStalemate(ChessColour player)
+        {
+            if (!IsPlayerInCheck(player))
+            {
+                return !GetAllPossibleMoves(player).HasTrue();
+            }
+            else
+            {
+                // if the player is in check he can't possibly be in a stalemate
+                return false;
+            }
+        }
+
         public static int GetIndex(int row, int column)
         {
             return row * Chessboard.Dimension + column;
@@ -310,6 +335,19 @@ namespace Chess.Models
 
             return ray;
 
+        }
+
+        private BitArray GetAllPossibleMoves(ChessColour colour)
+        {
+            var possibleMoves = new BitArray(Chessboard.NumLocations, false);
+            foreach (var location in Locations)
+            {
+                if (location.HasPiece && location.PieceColour == colour)
+                {
+                    possibleMoves.Or(GetRay(location));
+                }
+            }
+            return possibleMoves;
         }
 
         
