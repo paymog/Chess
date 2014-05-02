@@ -65,11 +65,13 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Compile Include="Extensions.cs" />
+    <Compile Include="AI\AIEngine.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Models\Bishop.cs" />
     <Compile Include="Models\ChessBoard.cs" />
     <Compile Include="AI\ChessboardEvaluator.cs" />
+    <Compile Include="Models\ChessMove.cs" />
     <Compile Include="Models\King.cs" />
     <Compile Include="Models\Knight.cs" />
     <Compile Include="Models\Pawn.cs" />

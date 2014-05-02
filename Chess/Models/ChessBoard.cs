@@ -41,6 +41,20 @@ namespace Chess.Models
             UpdatePieceLocations();
         }
 
+        /// <summary>
+        /// Private copy constructor. Used for copying.
+        /// </summary>
+        /// <param name="board"></param>
+        public Chessboard(Chessboard board)
+        {
+            _locations = CreateChessBoard();
+            for (int i = 0; i < board.Locations.Count; i++)
+            {
+                Locations[i].Piece = board.Locations[i].Piece;
+            }
+            UpdatePieceLocations();
+        }
+
         public void MovePiece(BoardLocation from, BoardLocation to)
         {
             if (from == null)
@@ -55,9 +69,14 @@ namespace Chess.Models
             this.MovePiece(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
         }
 
+        public void MovePiece(int fromIndex, int toIndex)
+        {
+            this.MovePiece(Locations[fromIndex], fromIndex, Locations[toIndex], toIndex);
+        }
+
         public bool IsPlayerInCheck(ChessColour playerToCheck)
         {
-            int kingIndex = FindKingLocation(playerToCheck);
+            int kingIndex = FindKingIndex(playerToCheck);
             BitArray otherPlayerAttackVectors = GetAttackVectors(playerToCheck == ChessColour.Black ? ChessColour.White : ChessColour.Black);
             return otherPlayerAttackVectors[kingIndex];
         }
@@ -118,18 +137,20 @@ namespace Chess.Models
         }
 
         /// <summary>
-        /// Private copy constructor. Used for copying.
+        /// Gets all of the board location objects with a piece of a specified colour
         /// </summary>
-        /// <param name="board"></param>
-        private Chessboard(Chessboard board)
+        /// <param name="pieceColour">The piece color to filter by</param>
+        /// <returns></returns>
+        public IEnumerable<BoardLocation> GetLocations(ChessColour pieceColour)
         {
-            _locations = CreateChessBoard();
-            for(int i = 0; i < board.Locations.Count; i++)
-            {
-                Locations[i].Piece = board.Locations[i].Piece;
-            }
-            UpdatePieceLocations();
+            // TODO method needs to be renamed, I think
+
+            return from location in Locations
+                   where location.HasPiece && location.PieceColour == pieceColour
+                   select location;
+
         }
+
 
         /// <summary>
         /// Updates WhiteLocations and BlackLocations to accurately reflect the locations of the black and white pieces
@@ -157,14 +178,11 @@ namespace Chess.Models
             this.BlackLocations = blackLocations;
         }
 
-        private void MovePiece(int fromIndex, int toIndex)
-        {
-            this.MovePiece(Locations[fromIndex], fromIndex, Locations[toIndex], toIndex);
-        }
+        
 
         private void MovePiece(BoardLocation from, int fromIndex, BoardLocation to, int toIndex)
         {
-            
+
             if (fromIndex < 0 || fromIndex >= Chessboard.NumLocations)
             {
                 throw new ArgumentOutOfRangeException("fromIndex");
@@ -208,7 +226,7 @@ namespace Chess.Models
 
         }
 
-        
+
 
         private void CreateChessPieces()
         {
@@ -274,9 +292,9 @@ namespace Chess.Models
             return result;
         }
 
-        
 
-        private int FindKingLocation(ChessColour chessColour)
+
+        private int FindKingIndex(ChessColour chessColour)
         {
             for (int i = 0; i < this.Locations.Count; i++)
             {
@@ -305,7 +323,7 @@ namespace Chess.Models
             return result;
         }
 
-        
+
 
         /// <summary>
         /// Given a ray of potential moves (assuming the player isn't in check), this method will generate a ray
@@ -318,15 +336,15 @@ namespace Chess.Models
         private BitArray GetCheckPreventionRay(BitArray potentialMoves, int index, ChessColour pieceColour)
         {
             var ray = new BitArray(potentialMoves.Count, false);
-            
-            for(int i = 0; i < potentialMoves.Count; i++)
+
+            for (int i = 0; i < potentialMoves.Count; i++)
             {
                 var bit = potentialMoves[i];
-                if(bit)
+                if (bit)
                 {
                     var board = new Chessboard(this);
                     board.MovePiece(index, i);
-                    if(!board.IsPlayerInCheck(pieceColour))
+                    if (!board.IsPlayerInCheck(pieceColour))
                     {
                         ray[i] = true;
                     }
@@ -351,5 +369,7 @@ namespace Chess.Models
         }
 
         
+
+
     }
 }

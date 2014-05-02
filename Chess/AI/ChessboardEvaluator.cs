@@ -40,7 +40,7 @@ namespace Chess.AI
         {
             int value = 0;
 
-            foreach(var location in board.Locations)
+            foreach (var location in board.Locations)
             {
                 value += GetValueOfPiece(location.Piece);
             }
@@ -50,14 +50,19 @@ namespace Chess.AI
 
         private int GetValueOfPiece(ChessPiece piece)
         {
-            if(piece == null)
+            if (piece == null)
             {
                 return 0;
             }
-            else
+
+            int multiplier = 1;
+            if (piece.Colour == ChessColour.Black)
             {
-                return piece.Colour == ChessColour.Black ? -1 * PieceValues[piece.GetType()] : PieceValues[piece.GetType()];
+                multiplier = -1;
             }
+
+            return multiplier * PieceValues[piece.GetType()];
+
         }
     }
 }

@@ -9,12 +9,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Chess;
+using Chess.AI;
 
 namespace Chess.ViewModels
 {
     public class ChessboardViewModel : BaseViewModel
     {
         private readonly Chessboard board = new Chessboard();
+        private readonly AIEngine engine = new AIEngine();
+
         private ChessColour _currentPlayerColour = ChessColour.White;
         private BoardLocation _selectedBoardLocation = null;
         public static readonly RoutedCommand SelectLocationCommand = new RoutedCommand();
@@ -22,6 +25,7 @@ namespace Chess.ViewModels
         private bool _whiteInCheck = false;
         private bool _checkmate = false;
         private bool _stalemate = false;
+
 
         #region Properties
 
@@ -178,6 +182,16 @@ namespace Chess.ViewModels
             DetectCheck();
             DetectCheckmate();
             DetectStalemate();
+
+            if(CurrentPlayerColour == ChessColour.Black)
+            {
+                var move = engine.FindBestMove(board, CurrentPlayerColour);
+                board.MovePiece(move.FromIndex, move.ToIndex);
+                this.ToggleCurrentPlayerColour();
+                DetectCheck();
+                DetectCheckmate();
+                DetectStalemate();
+            }
         }
         #endregion
 
@@ -196,9 +210,6 @@ namespace Chess.ViewModels
         {
             Stalemate = board.IsPlayerInStalemate(CurrentPlayerColour);
         }
-
-
-
 
         private void TargetLocations(BoardLocation location)
         {
