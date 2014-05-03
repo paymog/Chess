@@ -32,31 +32,21 @@ namespace Chess.AI
 
         private Tuple<int, ChessMove> FindBestMove(Chessboard board, ChessColour player, int currentPly)
         {
-            var pieceLocations = board.GetLocations(player);
             var movesAndScore = new List<Tuple<int, ChessMove>>();
             
 
-            foreach (var location in pieceLocations)
+            foreach(var move in FindAllMoves(board, player))
             {
-                var locationIndex = board.Locations.IndexOf(location);
-                var ray = board.GetRay(location);
-                for (int i = 0; i < ray.Count; i++)
-                {
-                    if (ray[i])
-                    {
-                        var move = new ChessMove { FromIndex = locationIndex, ToIndex = i, PieceMoved = location.Piece, PieceTaken = board.Locations[i].Piece };
-                        var newBoard = new Chessboard(board);
-                        newBoard.MovePiece(locationIndex, i);
+                var newBoard = new Chessboard(board);
+                newBoard.MovePiece(move.FromIndex, move.ToIndex);
 
-                        if (currentPly == MAX_PLY)
-                        {
-                            movesAndScore.Add(new Tuple<int, ChessMove>(Evaluator.Evaluate(newBoard), move));
-                        }
-                        else
-                        {
-                            movesAndScore.Add(Tuple.Create(FindBestMove(newBoard, Utils.GetOtherColour(player), currentPly + 1).Item1, move));
-                        }
-                    }
+                if (currentPly == MAX_PLY)
+                {
+                    movesAndScore.Add(new Tuple<int, ChessMove>(Evaluator.Evaluate(newBoard), move));
+                }
+                else
+                {
+                    movesAndScore.Add(Tuple.Create(FindBestMove(newBoard, Utils.GetOtherColour(player), currentPly + 1).Item1, move));
                 }
             }
 
@@ -69,8 +59,6 @@ namespace Chess.AI
                 return FindMax(movesAndScore);
             }
         }
-
-
 
         private Tuple<int, ChessMove> FindMin(List<Tuple<int, ChessMove>> moves)
         {
@@ -119,6 +107,24 @@ namespace Chess.AI
 
             var rnd = new Random();
             return minMoves[rnd.Next(minMoves.Count)];
+        }
+
+        private IEnumerable<ChessMove> FindAllMoves(Chessboard board, ChessColour player)
+        {
+            var pieceLocations = board.GetLocations(player);
+
+            foreach (var location in pieceLocations)
+            {
+                var locationIndex = board.Locations.IndexOf(location);
+                var ray = board.GetRay(location);
+                for (int i = 0; i < ray.Count; i++)
+                {
+                    if (ray[i])
+                    {
+                        yield return new ChessMove { FromIndex = locationIndex, ToIndex = i, PieceMoved = location.Piece, PieceTaken = board.Locations[i].Piece };
+                    }
+                }
+            }
         }
     }
 }
