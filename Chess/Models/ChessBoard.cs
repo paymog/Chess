@@ -272,7 +272,7 @@ namespace Chess.Models
 
         private static ObservableCollection<BoardLocation> CreateChessBoard()
         {
-            var result = new ObservableCollection<BoardLocation>();
+            var result = new List<BoardLocation>(Chessboard.NumLocations);
             for (int i = 0; i < Dimension; i++)
             {
                 for (int j = 0; j < Dimension / 2; j++)
@@ -289,7 +289,7 @@ namespace Chess.Models
                     }
                 }
             }
-            return result;
+            return new ObservableCollection<BoardLocation>(result);
         }
 
 

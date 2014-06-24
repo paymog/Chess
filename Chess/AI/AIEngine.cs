@@ -27,7 +27,7 @@ namespace Chess.AI
         /// <returns></returns>
         public ChessMove FindBestMove(Chessboard board, ChessColour player)
         {
-            return FindBestMove(board, player, 1).Item2;
+            return FindBestMove(board, player, MAX_PLY).Item2;
         }
 
         private Tuple<int, ChessMove> FindBestMove(Chessboard board, ChessColour player, int currentPly)
@@ -40,13 +40,15 @@ namespace Chess.AI
                 var newBoard = new Chessboard(board);
                 newBoard.MovePiece(move.FromIndex, move.ToIndex);
 
-                if (currentPly == MAX_PLY)
+                // base case
+                if (currentPly == 1)
                 {
                     movesAndScore.Add(new Tuple<int, ChessMove>(Evaluator.Evaluate(newBoard), move));
                 }
-                else
+                else //recursive case
                 {
-                    movesAndScore.Add(Tuple.Create(FindBestMove(newBoard, Utils.GetOtherColour(player), currentPly + 1).Item1, move));
+                    var bestMove = FindBestMove(newBoard, Utils.GetOtherColour(player), currentPly - 1);
+                    movesAndScore.Add(Tuple.Create(bestMove.Item1, move));
                 }
             }
 
