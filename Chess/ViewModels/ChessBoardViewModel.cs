@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Chess;
 using Chess.AI;
+using System.Diagnostics;
 
 namespace Chess.ViewModels
 {
@@ -25,6 +26,7 @@ namespace Chess.ViewModels
         private bool _whiteInCheck = false;
         private bool _checkmate = false;
         private bool _stalemate = false;
+        private int _count = 0;
 
 
         #region Properties
@@ -118,6 +120,16 @@ namespace Chess.ViewModels
             }
         }
 
+        public int BranchCount
+        {
+            get { return _count; }
+            set
+            {
+                this._count = value;
+                base.RaisePropertyChanged(() => this.BranchCount);
+            }
+        }
+
         #endregion
 
         public ChessboardViewModel()
@@ -170,7 +182,7 @@ namespace Chess.ViewModels
                 else
                 {
                     // move piece. Can only be moved to a location that is targeted.
-                    board.MovePiece(this.SelectedBoardLocation, location);
+                    board.MakeMove(this.SelectedBoardLocation, location);
                     this.ToggleCurrentPlayerColour();
                     this.SelectedBoardLocation.IsSelected = false;
                     location.IsSelected = false;
@@ -185,12 +197,13 @@ namespace Chess.ViewModels
 
             if(CurrentPlayerColour == ChessColour.Black)
             {
-                var move = engine.FindBestMove(board, CurrentPlayerColour);
-                board.MovePiece(move.FromIndex, move.ToIndex);
+                var move = engine.FindBestAlphaBetaMove(board, CurrentPlayerColour);
+                board.MakeMove(move.FromIndex, move.ToIndex);
                 this.ToggleCurrentPlayerColour();
                 DetectCheck();
                 DetectCheckmate();
                 DetectStalemate();
+                this.BranchCount = engine.recursiveCount;
             }
         }
         #endregion

@@ -103,14 +103,14 @@ namespace ChessTest.Models
         [ExpectedException(typeof(ArgumentNullException))]
         public void testMovePiece_NullFirstParameter()
         {
-            board.MovePiece(null, board.Locations[0]);
+            board.MakeMove(null, board.Locations[0]);
         }
 
         [TestMethod]
         [ExpectedException(typeof(ArgumentNullException))]
         public void testMovePiece_NullSecondParameter()
         {
-            board.MovePiece(board.Locations[0], null);
+            board.MakeMove(board.Locations[0], null);
         }
 
 
@@ -220,7 +220,7 @@ namespace ChessTest.Models
 
         private void movePiece(int fromIndex, int toIndex)
         {
-            board.MovePiece(board.Locations[fromIndex], board.Locations[toIndex]);
+            board.MakeMove(board.Locations[fromIndex], board.Locations[toIndex]);
         }
     }
 }

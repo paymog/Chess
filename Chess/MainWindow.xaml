@@ -47,7 +47,8 @@
                         </Style.Triggers>
                     </Style>
                 </Label.Style>
-            </Label>  
+            </Label> 
+            <Label Content="{Binding ElementName=board, Path=DataContext.BranchCount}"/>
         </StackPanel>
         
         <view:ChessboardView  x:Name="board" Grid.Row="1"/>

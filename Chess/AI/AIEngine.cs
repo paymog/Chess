@@ -9,8 +9,8 @@ namespace Chess.AI
 {
     class AIEngine
     {
-        public static readonly int MAX_PLY = 2;
-
+        public static readonly int MAX_PLY = 3;
+        public int recursiveCount = 0;
         public ChessboardEvaluator Evaluator { get; private set; }
 
         public AIEngine()
@@ -30,15 +30,82 @@ namespace Chess.AI
             return FindBestMove(board, player, MAX_PLY).Item2;
         }
 
+        public ChessMove FindBestAlphaBetaMove(Chessboard board, ChessColour player)
+        {
+            var moves = new List<Tuple<int, ChessMove>>();
+
+            foreach(var move in FindAllMoves(board, player))
+            {
+                var newBoard = new Chessboard(board);
+                newBoard.MakeMove(move.FromIndex, move.ToIndex);
+
+                var score = AlphaBeta(newBoard, MAX_PLY - 1, int.MinValue, int.MaxValue, Utils.GetOtherColour(player));
+
+                moves.Add(Tuple.Create( score, move));
+            }
+
+            if(player == ChessColour.White)
+            {
+                return FindMax(moves).Item2;
+            }
+            else
+            {
+                return FindMin(moves).Item2;
+            }
+
+        }
+
+        private int AlphaBeta(Chessboard board, int depth, int alpha, int beta, ChessColour player)
+        {
+            recursiveCount += 1;
+            if (depth == 0)
+            {
+                return Evaluator.Evaluate(board);
+            }
+
+            Chessboard originalBoard = new Chessboard(board);
+            if(player == ChessColour.White)
+            {
+                foreach(var move in FindAllMoves(board, player))
+                {
+                    board.MakeMove(move.FromIndex, move.ToIndex);
+                    alpha = Math.Max(alpha, AlphaBeta(board, depth - 1, alpha, beta, ChessColour.Black));
+                    board.UndoMove(move);
+
+                    if(beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+                return alpha;
+            }
+            else
+            {
+                foreach (var move in FindAllMoves(board, player))
+                {
+                    board.MakeMove(move.FromIndex, move.ToIndex);
+                    beta = Math.Min(beta, AlphaBeta(board, depth - 1, alpha, beta, ChessColour.White));
+                    board.UndoMove(move);
+
+                    if (beta <= alpha)
+                    {
+                        break;
+                    }
+                }
+                return beta;
+            }
+        }
+
         private Tuple<int, ChessMove> FindBestMove(Chessboard board, ChessColour player, int currentPly)
         {
+            recursiveCount += 1;
             var movesAndScore = new List<Tuple<int, ChessMove>>();
             
 
             foreach(var move in FindAllMoves(board, player))
             {
                 var newBoard = new Chessboard(board);
-                newBoard.MovePiece(move.FromIndex, move.ToIndex);
+                newBoard.MakeMove(move.FromIndex, move.ToIndex);
 
                 // base case
                 if (currentPly == 1)
@@ -123,7 +190,7 @@ namespace Chess.AI
                 {
                     if (ray[i])
                     {
-                        yield return new ChessMove { FromIndex = locationIndex, ToIndex = i, PieceMoved = location.Piece, PieceTaken = board.Locations[i].Piece };
+                        yield return new ChessMove(locationIndex, i, location.Piece, board.Locations[i].Piece);
                     }
                 }
             }

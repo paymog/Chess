@@ -46,5 +46,10 @@ namespace Chess
             }
         }
 
+
+        public static ChessMove BuildMove(IList<BoardLocation> locations, int fromIndex, int toIndex)
+        {
+            return new ChessMove(fromIndex, toIndex, locations[fromIndex].Piece, locations[toIndex].Piece);
+        }
     }
 }

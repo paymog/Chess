@@ -55,7 +55,7 @@ namespace Chess.Models
             UpdatePieceLocations();
         }
 
-        public void MovePiece(BoardLocation from, BoardLocation to)
+        public void MakeMove(BoardLocation from, BoardLocation to)
         {
             if (from == null)
             {
@@ -66,12 +66,58 @@ namespace Chess.Models
                 throw new ArgumentNullException("to");
             }
 
-            this.MovePiece(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
+            this.MakeMove(from, Locations.IndexOf(from), to, Locations.IndexOf(to));
         }
 
-        public void MovePiece(int fromIndex, int toIndex)
+        public void MakeMove(int fromIndex, int toIndex)
         {
-            this.MovePiece(Locations[fromIndex], fromIndex, Locations[toIndex], toIndex);
+            this.MakeMove(Locations[fromIndex], fromIndex, Locations[toIndex], toIndex);
+        }
+
+        public void MakeMove(ChessMove move)
+        {
+            this.MakeMove(move.FromIndex, move.ToIndex);
+        }
+
+        public void UndoMove(ChessMove move)
+        {
+            if(move == null)
+            {
+                throw new ArgumentNullException("move");
+            }
+
+            var oldBlackLocations = this.BlackLocations;
+            var oldWhiteLocations = this.WhiteLocations;
+
+            if(move.PieceMoved.Colour == ChessColour.Black)
+            {
+                oldBlackLocations[move.FromIndex] = true;
+                oldBlackLocations[move.ToIndex] = false;
+            }
+            else
+            {
+                oldWhiteLocations[move.FromIndex] = true;
+                oldWhiteLocations[move.ToIndex] = false;
+            }
+            Locations[move.ToIndex].Piece = null;
+            Locations[move.FromIndex].Piece = move.PieceMoved;
+
+            if(move.PieceTaken != null)
+            {
+                if(move.PieceTaken.Colour == ChessColour.Black)
+                {
+                    oldBlackLocations[move.ToIndex] = true;
+                }
+                else
+                {
+                    oldWhiteLocations[move.ToIndex] = true;
+                }
+
+                Locations[move.ToIndex].Piece = move.PieceTaken;
+            }
+
+            this.BlackLocations = oldBlackLocations;
+            this.WhiteLocations = oldWhiteLocations;
         }
 
         public bool IsPlayerInCheck(ChessColour playerToCheck)
@@ -151,6 +197,31 @@ namespace Chess.Models
 
         }
 
+        public override bool Equals(Object obj)
+        {
+            if(obj == null)
+            {
+                return false;
+            }
+
+            Chessboard board = obj as Chessboard;
+            if(board == null)
+            {
+                return false;
+            }
+
+            for(int i = 0; i < this.Locations.Count; i++)
+            {
+                if (!this.Locations[i].HasPiece && !board.Locations[i].HasPiece) { continue; }
+                
+                if (this.Locations[i].HasPiece ^ board.Locations[i].HasPiece == true) { return false; }
+                if (!this.Locations[i].Piece.GetType().Equals(board.Locations[i].Piece.GetType())) { return false; }
+                if (this.Locations[i].PieceColour != board.Locations[i].PieceColour) { return false; }
+            }
+
+            return true;
+        }
+
 
         /// <summary>
         /// Updates WhiteLocations and BlackLocations to accurately reflect the locations of the black and white pieces
@@ -180,7 +251,7 @@ namespace Chess.Models
 
         
 
-        private void MovePiece(BoardLocation from, int fromIndex, BoardLocation to, int toIndex)
+        private void MakeMove(BoardLocation from, int fromIndex, BoardLocation to, int toIndex)
         {
 
             if (fromIndex < 0 || fromIndex >= Chessboard.NumLocations)
@@ -337,17 +408,19 @@ namespace Chess.Models
         {
             var ray = new BitArray(potentialMoves.Count, false);
 
+            var board = new Chessboard(this);
             for (int i = 0; i < potentialMoves.Count; i++)
             {
                 var bit = potentialMoves[i];
                 if (bit)
                 {
-                    var board = new Chessboard(this);
-                    board.MovePiece(index, i);
+                    var move = Utils.BuildMove(Locations, index, i);
+                    board.MakeMove(move);
                     if (!board.IsPlayerInCheck(pieceColour))
                     {
                         ray[i] = true;
                     }
+                    board.UndoMove(move);
                 }
             }
 
